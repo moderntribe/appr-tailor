@@ -54,6 +54,7 @@ export default {
   methods: {
     ...mapMutations('editor', ['togglePublishDiff']),
     ...mapActions('repository', ['initialize']),
+    ...mapActions('repository/activities', ['fetch']),
     closePublishDiff() {
       this.togglePublishDiff(false);
     },
@@ -64,6 +65,9 @@ export default {
       if (selectedElementId === queryElementId) return;
       if (selectedElementId) query.elementId = selectedElementId;
       this.$router.replace({ query });
+    },
+    fetchActivities() {
+      if (this.activityId) return this.fetch({ activityId: this.activityId });
     }
   },
   provide() {
@@ -86,6 +90,7 @@ export default {
     activityId() {
       this.selectedElement = null;
       this.closePublishDiff();
+      return this.fetchActivities();
     }
   },
   async created() {
@@ -95,6 +100,7 @@ export default {
     if (!repositoryLoaded || repositoryChanged) {
       await this.initialize(currentRepositoryId);
     }
+    await this.fetchActivities();
     this.isLoading = false;
   },
   beforeDestroy() {
