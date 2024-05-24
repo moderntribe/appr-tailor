@@ -4,6 +4,7 @@ import { NO_CONTENT, NOT_FOUND } from 'http-status-codes';
 import { createError } from '../shared/error/helpers.js';
 import db from '../shared/database/index.js';
 import getVal from 'lodash/get.js';
+import groupBy from 'lodash/groupBy.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import { parseOptions } from '../shared/database/pagination.js';
@@ -39,15 +40,17 @@ const getFilter = search => {
   return { [Op.iLike]: term };
 };
 
+const includeUser = () => ({
+  model: User,
+  paranoid: false,
+  attributes: [
+    'id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'
+  ]
+});
+
 const includeLastRevision = () => ({
   model: Revision,
-  include: [{
-    model: User,
-    paranoid: false,
-    attributes: [
-      'id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'
-    ]
-  }],
+  include: [includeUser()],
   order: [['createdAt', 'DESC']],
   limit: 1
 });
@@ -66,7 +69,7 @@ const includeRepositoryTags = query => {
     : include;
 };
 
-function index({ query, user, opts }, res) {
+async function index({ query, user, opts }, res) {
   const { search, name, schemas } = query;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
@@ -78,9 +81,22 @@ function index({ query, user, opts }, res) {
     ...includeRepositoryTags(query)
   ];
   const repositories = user.isAdmin()
-    ? Repository.findAll(opts)
-    : user.getRepositories(opts);
-  return repositories.then(data => res.json({ data }));
+    ? await Repository.findAll(opts)
+    : await user.getRepositories(opts);
+  const revisions = groupBy(await Revision.findAll({
+    where: { repositoryId: repositories.map(it => it.id) },
+    include: [includeUser()],
+    attributes: [
+      'repositoryId',
+      [sequelize.fn('max', sequelize.col('revision.created_at')), 'createdAt']
+    ],
+    group: ['repositoryId', 'user.id']
+  }), 'repositoryId');
+  const data = repositories.map(repository => ({
+    ...repository.toJSON(),
+    revisions: revisions[repository.id]
+  }));
+  return res.json({ data });
 }
 
 async function create({ user, body }, res) {
