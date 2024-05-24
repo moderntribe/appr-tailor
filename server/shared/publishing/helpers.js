@@ -47,6 +47,7 @@ function publishActivity(activity) {
 
     activity.publishedAt = new Date();
     addToSpine(spine, activity);
+    Object.assign(spine, getRepositoryAttrs(repository));
 
     return publishContainers(activity)
       .then(async containers => {
