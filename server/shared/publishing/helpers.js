@@ -47,7 +47,6 @@ function publishActivity(activity) {
 
     activity.publishedAt = new Date();
     addToSpine(spine, activity);
-    Object.assign(spine, getRepositoryAttrs(repository));
 
     return publishContainers(activity)
       .then(async containers => {
@@ -59,7 +58,7 @@ function publishActivity(activity) {
         return attachContainerSummary(publishedData, containers);
       })
       .then(() => saveSpine(spine))
-      .then(savedSpine => updateRepositoryCatalog(repository, savedSpine.publishedAt))
+      .then(savedSpine => updateRepositoryCatalog(repository, savedSpine.publishedAt, false))
       .then(() => updatePublishingStatus(repository, activity))
       .then(() => activity.save());
   });
