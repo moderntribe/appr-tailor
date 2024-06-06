@@ -50,7 +50,7 @@ class ActivityStatus extends Model {
       defaultScope: {
         include: [{ model: User, as: 'assignee' }],
         order: [['createdAt', 'DESC']],
-        limit: 1
+        required: false
       }
     };
   }
