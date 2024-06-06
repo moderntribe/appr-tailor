@@ -72,12 +72,12 @@ function getRepositoryCatalog() {
   });
 }
 
-function updateRepositoryCatalog(repository, publishedAt) {
+function updateRepositoryCatalog(repository, publishedAt, updateInfo = true) {
   return getRepositoryCatalog().then(catalog => {
     const existing = find(catalog, { id: repository.id });
     if (!existing && repository.deletedAt) return;
     const repositoryData = {
-      ...getRepositoryAttrs(repository),
+      ...(updateInfo || !existing ? getRepositoryAttrs(repository) : existing),
       publishedAt: publishedAt || existing.publishedAt,
       detachedAt: repository.deletedAt
     };

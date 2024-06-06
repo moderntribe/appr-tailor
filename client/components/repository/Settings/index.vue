@@ -21,6 +21,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { repository as api } from '@/api';
 import AppFooter from '@/components/common/Footer.vue';
 import CloneModal from './CloneModal.vue';
 import ExportModal from './ExportModal.vue';
@@ -69,7 +70,16 @@ export default {
       actions[name]();
     },
     publishRepository() {
-      this.confirmPublishing(this.outlineActivities);
+      const activities = this.outlineActivities;
+      const message = this.getPublishMessage(activities.length);
+      this.showConfirmationModal({
+        title: 'Publish content',
+        message,
+        action: async () => {
+          await api.publishRepositoryMeta(this.repositoryId);
+          return this.publish(activities.filter(activity => !activity.detached));
+        }
+      });
     },
     clone() {
       this.showCloneModal = true;
