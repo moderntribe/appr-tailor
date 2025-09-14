@@ -9,7 +9,7 @@ variable "region" {
 }
 
 variable "tailor_acm_certificate_arn" {
-  default = "arn:aws:acm:us-east-1:902864695929:certificate/2ba12a83-294d-4f8f-8b97-abc2f9c30d4c"
+  default = "arn:aws:acm:us-east-1:902864695929:certificate/8b8110c8-5c49-497f-916a-8e38ecd3e368"
 }
 
 variable "tailor_server_secrets" {
