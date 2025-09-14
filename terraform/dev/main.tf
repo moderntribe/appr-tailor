@@ -1,14 +1,16 @@
 resource "aws_ecs_service" "tailor_service" {
-  depends_on      = [aws_lb_listener.tailor_listener_https, aws_lb_listener.tailor_listener_http]
-  name            = local.tailor_name
-  cluster         = local.ecs_cluster_info.arn
-  task_definition = aws_ecs_task_definition.tailor_task_definition.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  depends_on                         = [aws_lb_listener.tailor_listener_https, aws_lb_listener.tailor_listener_http]
+  name                               = local.tailor_name
+  cluster                            = local.ecs_cluster_info.arn
+  task_definition                    = aws_ecs_task_definition.tailor_task_definition.arn
+  desired_count                      = 1
+  launch_type                        = "FARGATE"
+  deployment_minimum_healthy_percent = 0
+  enable_execute_command             = true
 
   network_configuration {
     subnets          = local.network_info.private_subnets
-    security_groups  = [aws_security_group.web_server.id]
+    security_groups  = [aws_security_group.tailor_sg.id]
     assign_public_ip = false
   }
 
