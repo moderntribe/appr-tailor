@@ -1,0 +1,68 @@
+name: Deployment to Staging
+
+on:
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '16.20.1'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.APPR_DEPLOY_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.APPR_DEPLOY_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push server image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: appr-tailor-staging
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          # docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          # echo "### :whale: Docker image published" >> $GITHUB_STEP_SUMMARY
+          # echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\`" >> $GITHUB_STEP_SUMMARY
+          # echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:latest\`" >> $GITHUB_STEP_SUMMARY
+
+          docker pull $ECR_REGISTRY/cepp-tailor-staging:latest
+          docker tag $ECR_REGISTRY/cepp-tailor-staging:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: terraform/staging
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: terraform/staging
+        id: plan
+        run: |
+          terraform plan -out=plan.out
+
+          echo '```' > plan.txt
+          terraform show -no-color plan.out >> plan.txt
+          echo '```' >> plan.txt
+
+          echo "# Terraform Plan" >> $GITHUB_STEP_SUMMARY
+          cat plan.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Terraform Apply
+        working-directory: terraform/staging
+        run: |
+          terraform apply -auto-approve "${{ steps.plan.outputs.plan }}"
