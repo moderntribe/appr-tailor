@@ -57,6 +57,7 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "PREVIEW_URL", value = "https://learn-staging.advancingpretrial.org/api/v1/preview/" },
         { name = "PROTOCOL", value = "https" },
         { name = "REVERSE_PROXY_PORT", value = "443" },
+        { name = "CORS_ALLOWED_ORIGINS", value = "http://localhost:8080" },  # same as dev
       ]
       secrets = concat(
         [
