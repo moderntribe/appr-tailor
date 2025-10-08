@@ -52,7 +52,11 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "DATABASE_HOST", value = local.rds_tailor_info.address },
         { name = "DATABASE_PORT", value = tostring(local.rds_tailor_info.port) },
         { name = "DATABASE_PASSWORD", value = "tailor" },
-        { name = "PORT", value = "3000" }
+        { name = "PORT", value = "3000" },
+        { name = "HOSTNAME", value = "tailor-staging.advancingpretrial.org" },
+        { name = "PREVIEW_URL", value = "https://learn-staging.advancingpretrial.org/api/v1/preview/" },
+        { name = "PROTOCOL", value = "https" },
+        { name = "REVERSE_PROXY_PORT", value = "443" },
       ]
       secrets = concat(
         [
