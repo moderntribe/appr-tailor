@@ -20,7 +20,6 @@ variable "tailor_server_secrets" {
     AUTH_JWT_SCHEME                = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/staging/AUTH_JWT_SCHEME"
     AUTH_JWT_SECRET                = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/staging/AUTH_JWT_SECRET"
     AUTH_SALT_ROUNDS               = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/staging/AUTH_SALT_ROUNDS"
-    CORS_ALLOWED_ORIGINS           = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/staging/CORS_ALLOWED_ORIGINS"
     EMAIL_HOST                     = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/staging/EMAIL_HOST"
     EMAIL_PASSWORD                 = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/staging/EMAIL_PASSWORD"
     EMAIL_SENDER_ADDRESS           = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/staging/EMAIL_SENDER_ADDRESS"
