@@ -1,6 +1,6 @@
 resource "aws_route53_record" "platform_alias_record" {
   zone_id = "Z0779292D32CEPGAT7T2"  # advancingpretrial.org (public hosted zone)
-  name    = "tailor-${var.environment}.advancingpretrial.org"
+  name    = "tailor2.dev.advancingpretrial.org"
   type    = "A"
 
   alias {
