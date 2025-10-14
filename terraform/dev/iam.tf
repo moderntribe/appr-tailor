@@ -78,7 +78,11 @@ resource "aws_iam_role_policy" "tailor_task_policy" {
           "ssmmessages:CreateControlChannel",
           "ssmmessages:CreateDataChannel",
           "ssmmessages:OpenControlChannel",
-          "ssmmessages:OpenDataChannel"
+          "ssmmessages:OpenDataChannel",
+          "ssm:Get*",
+          "ssm:Describe*",
+          "ssm:List*",
+          "logs:*"
         ]
         Resource = "*"
       }
