@@ -28,7 +28,12 @@ resource "aws_iam_role_policy" "tailor_ecs_execution_secrets" {
         Action = [
           "secretsmanager:Get*",
           "secretsmanager:List*",
-          "ssm:Get*"
+          "ssm:Get*",
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel",
+          "logs:*"
         ]
         Resource = "*"
       }
@@ -69,7 +74,11 @@ resource "aws_iam_role_policy" "tailor_task_policy" {
       {
         Effect = "Allow"
         Action = [
-          "secretsmanager:*"
+          "secretsmanager:*",
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
         ]
         Resource = "*"
       }
