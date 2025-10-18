@@ -24,23 +24,34 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm ci --legacy-peer-deps
+
+      - name: Build client
+        env:
+          API_PATH: /api
+          OIDC_ENABLED: 1
+          OIDC_LOGIN_TEXT: "Login with APPR"
+          OIDC_LOGOUT_ENABLED: 1
+          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_DEV }}
+          AUTH0_CUSTOM_DOMAIN: cepp-dev.auth0.com
+          AUTH0_DOMAIN: cepp-dev.auth0.com
+        run: npm run build
+
       - name: Build and push server image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: appr-tailor-dev
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          # docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-          # echo "### :whale: Docker image published" >> $GITHUB_STEP_SUMMARY
-          # echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\`" >> $GITHUB_STEP_SUMMARY
-          # echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:latest\`" >> $GITHUB_STEP_SUMMARY
-
-          docker pull $ECR_REGISTRY/cepp-tailor-dev:latest
-          docker tag $ECR_REGISTRY/cepp-tailor-dev:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          echo "### :whale: Docker image published" >> $GITHUB_STEP_SUMMARY
+          echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:latest\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
