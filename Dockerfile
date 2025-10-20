@@ -1,4 +1,4 @@
-FROM node:14.21.3-bullseye-slim AS base
+FROM node:20.3.1-bullseye AS base
 RUN apt-get update && apt-get install -y --no-install-recommends dumb-init && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT ["dumb-init", "--"]
 
