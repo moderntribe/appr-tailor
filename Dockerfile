@@ -34,4 +34,6 @@ COPY --from=install --chown=node:node /usr/src/app/client ./client
 FROM configure AS run
 ENV NODE_ENV=production
 USER node
-CMD ["sh", "-c", "npm run db migrate && node -r ./server/script/preflight ./server/index.js"]
+
+CMD ["sh", "-c", "node --loader ts-node/esm ./server/script/sequelize.js migrate && node -r ./server/script/preflight ./server/index.js"]
+
