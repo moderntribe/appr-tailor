@@ -6,9 +6,9 @@ FROM node:14.21.3 AS install
 WORKDIR /usr/src/app
 ENV NODE_ENV production
 COPY package*.json .
-RUN npm ci --only=production
+RUN npm ci --only=production --legacy-peer-deps
 
-FROM base AS configure
+FROM install AS configure
 WORKDIR /usr/src/app
 COPY --chown=node:node --from=install /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node package.json sequelize.config.js tailor.config.js ./
