@@ -1,8 +1,8 @@
-FROM node:14.21.3-slim@sha256:21b6dc452bd2c066724bd5be0f7256ef81a068c47de1adead10a2f810557de02 AS base
-RUN apt update && apt install -y --no-install-recommends dumb-init
+FROM node:14.21.3-bullseye-slim AS base
+RUN apt-get update && apt-get install -y --no-install-recommends dumb-init && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT ["dumb-init", "--"]
 
-FROM node:14.21.3@sha256:2cafa3fbb0b6529ee4726b4f599ec27ee557ea3dea7019182323b3779959927f AS install
+FROM node:14.21.3 AS install
 WORKDIR /usr/src/app
 ENV NODE_ENV production
 COPY package*.json .
