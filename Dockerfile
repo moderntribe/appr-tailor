@@ -5,13 +5,14 @@ ENTRYPOINT ["dumb-init", "--"]
 FROM base AS install
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
-COPY package*.json ./
+COPY package-lock.json package.json ./
 COPY packages ./packages
 COPY common ./common
 COPY config ./config
 COPY extensions ./extensions
 COPY server ./server
 COPY client ./client
+COPY lerna.json ./
 RUN npm ci --only=production --legacy-peer-deps
 
 FROM base AS configure
