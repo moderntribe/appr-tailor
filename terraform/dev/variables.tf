@@ -1,3 +1,7 @@
+variable "image_tag" {
+  description = "docker image tag"
+}
+
 variable "environment" {
   description = "Environment name (e.g., dev, staging, prod)"
   type        = string
