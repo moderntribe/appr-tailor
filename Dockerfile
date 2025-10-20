@@ -13,7 +13,7 @@ COPY extensions ./extensions
 COPY server ./server
 COPY client ./client
 COPY lerna.json ./
-RUN npm ci --only=production --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 FROM base AS configure
 WORKDIR /usr/src/app
