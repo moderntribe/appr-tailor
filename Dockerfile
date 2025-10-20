@@ -24,14 +24,12 @@ COPY --from=install --chown=node:node /usr/src/app/config ./config
 COPY --from=install --chown=node:node /usr/src/app/extensions ./extensions
 COPY --from=install --chown=node:node /usr/src/app/server ./server
 COPY --from=install --chown=node:node /usr/src/app/client ./client
-COPY --from=install --chown=node:node /usr/src/app/dist ./dist
 # COPY --chown=node:node --from=install /usr/src/app/node_modules ./node_modules
 # COPY --chown=node:node package.json sequelize.config.js tailor.config.js ./
 # COPY --chown=node:node common ./common
 # COPY --chown=node:node config ./config
 # COPY --chown=node:node extensions ./extensions
 # COPY --chown=node:node server ./server
-COPY --chown=node:node dist ./dist
 
 FROM configure AS run
 ENV NODE_ENV=production
