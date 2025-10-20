@@ -4,7 +4,7 @@ ENTRYPOINT ["dumb-init", "--"]
 
 FROM node:14.21.3 AS install
 WORKDIR /usr/src/app
-ENV NODE_ENV production
+ENV NODE_ENV=production
 COPY package*.json .
 RUN npm ci --only=production --legacy-peer-deps
 
@@ -19,6 +19,6 @@ COPY --chown=node:node server ./server
 COPY --chown=node:node dist ./dist
 
 FROM configure AS run
-ENV NODE_ENV production
+ENV NODE_ENV=production
 USER node
-CMD npm run db migrate && node -r ./server/script/preflight ./server/index.js
+CMD ["sh", "-c", "npm run db migrate && node -r ./server/script/preflight ./server/index.js"]
