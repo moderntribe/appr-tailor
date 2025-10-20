@@ -11,12 +11,15 @@ RUN npm ci --only=production
 FROM base AS configure
 WORKDIR /usr/src/app
 COPY --chown=node:node --from=install /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node package.json sequelize.config.js tailor.config.js ./
+COPY --chown=node:node package*.json sequelize.config.js tailor.config.js ./
+COPY --chown=node:node lerna.json ./
+COPY --chown=node:node packages ./packages
 COPY --chown=node:node common ./common
 COPY --chown=node:node config ./config
 COPY --chown=node:node extensions ./extensions
 COPY --chown=node:node server ./server
 COPY --chown=node:node dist ./dist
+COPY --chown=node:node client ./client
 
 FROM configure AS run
 ENV NODE_ENV=production
