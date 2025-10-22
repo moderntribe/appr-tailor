@@ -33,7 +33,6 @@ variable "tailor_server_secrets" {
     EMAIL_USER                     = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/EMAIL_USER"
     FLAT_REPO_STRUCTURE            = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/FLAT_REPO_STRUCTURE"
     FORCE_COLOR                    = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/FORCE_COLOR"
-    LOG_LEVEL                      = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/LOG_LEVEL"
     OIDC_ALLOW_SIGNUP              = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/OIDC_ALLOW_SIGNUP"
     OIDC_AUTHORIZATION_ENDPOINT    = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/OIDC_AUTHORIZATION_ENDPOINT"
     OIDC_CLIENT_ID                 = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/OIDC_CLIENT_ID"
