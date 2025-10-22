@@ -24,22 +24,22 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps --include=dev
+      # - name: Install dependencies
+      #   run: npm install --legacy-peer-deps --include=dev
 
-      - name: Build workspace packages
-        run: npx lerna run build
+      # - name: Build workspace packages
+      #   run: npx lerna run build
 
-      - name: Build client
-        env:
-          API_PATH: /api
-          OIDC_ENABLED: 1
-          OIDC_LOGIN_TEXT: "Login with APPR"
-          OIDC_LOGOUT_ENABLED: 1
-          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_DEV }}
-          AUTH0_CUSTOM_DOMAIN: cepp-dev.auth0.com
-          AUTH0_DOMAIN: cepp-dev.auth0.com
-        run: npm run build
+      # - name: Build client
+      #   env:
+      #     API_PATH: /api
+      #     OIDC_ENABLED: 1
+      #     OIDC_LOGIN_TEXT: "Login with APPR"
+      #     OIDC_LOGOUT_ENABLED: 1
+      #     AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_DEV }}
+      #     AUTH0_CUSTOM_DOMAIN: cepp-dev.auth0.com
+      #     AUTH0_DOMAIN: cepp-dev.auth0.com
+      #   run: npm run build
 
       - name: Build and push server image
         env:
