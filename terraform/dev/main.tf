@@ -56,6 +56,8 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "DATABASE_PASSWORD", value = "tailor" },
         { name = "PORT", value = "3000" },
         { name = "HOSTNAME", value = "tailor-dev.advancingpretrial.org" },
+        { name = "PREVIEW_URL", value = "https://learn-dev.advancingpretrial.org/api/v1/preview/" },
+        { name = "LOG_LEVEL", value = "debug" },
       ]
       secrets = concat(
         [

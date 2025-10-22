@@ -47,7 +47,6 @@ variable "tailor_server_secrets" {
     OIDC_POST_LOGOUT_URI_KEY       = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/OIDC_POST_LOGOUT_URI_KEY"
     OIDC_TOKEN_ENDPOINT            = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/OIDC_TOKEN_ENDPOINT"
     OIDC_USERINFO_ENDPOINT         = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/OIDC_USERINFO_ENDPOINT"
-    PREVIEW_URL                    = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/PREVIEW_URL"
     PROTOCOL                       = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/PROTOCOL"
     REVERSE_PROXY_PORT             = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/REVERSE_PROXY_PORT"
     SESSION_SECRET                 = "arn:aws:ssm:us-east-1:902864695929:parameter/cepp-tailor/dev/SESSION_SECRET"
