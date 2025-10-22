@@ -54,7 +54,8 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "DATABASE_HOST", value = local.rds_tailor_info.address },
         { name = "DATABASE_PORT", value = tostring(local.rds_tailor_info.port) },
         { name = "DATABASE_PASSWORD", value = "tailor" },
-        { name = "PORT", value = "3000" }
+        { name = "PORT", value = "3000" },
+        { name = "HOSTNAME", value = "tailor-dev.advancingpretrial.org" },
       ]
       secrets = concat(
         [
