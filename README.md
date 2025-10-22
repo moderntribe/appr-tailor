@@ -22,6 +22,74 @@ Love](https://badgen.net/badge/Open%20Source/%E2%9D%A4/3eaf8e)](https://github.c
 
 Configurable headless CMS for complex content structures.
 
+Here’s the updated README section with your GitHub secrets information included, keeping it concise and clear:
+
+---
+
+## Tailor Deployment Overview
+
+**Tailor** runs across three environments: **Development**, **Staging**, and **Production**.
+
+### Environments
+
+* **Development:** [tailor-dev.advancingpretrial.org](https://tailor-dev.advancingpretrial.org)
+  Deployed on AWS ECS.
+* **Staging:** [tailor-staging.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
+  Deployed on AWS ECS.
+* **Production:** Runs on AWS EC2 instances, for now.
+
+Each environment is deployed independently through dedicated GitHub Actions workflows:
+`deploy-dev.yml`, `deploy-staging.yml`, and `deploy-prod.yml`.
+
+### Infrastructure
+
+All infrastructure resources are provisioned with **Terraform** and deployed through **GitHub Actions**.
+This includes:
+
+* VPCs, subnets, and security groups
+* ECS clusters and ECR registries
+* RDS databases (PostgreSQL)
+
+The RDS databases are hosted in **private subnets** with **no direct Internet access**.
+
+### Secrets Management
+
+* **AWS Secrets Manager** stores all sensitive runtime configuration for services.
+   
+   * We **no longer use Infisical** for secret management.
+* **GitHub repository secrets** are used to support deployments and CI/CD workflows. These include:
+
+  * **AWS credentials:** Allow pushing Docker images to ECR and deploying infrastructure via Terraform.
+  * **Auth0 Client ID:** Used by services to authenticate against Auth0.
+
+> GitHub secrets were created manually and must be maintained carefully.
+
+### Deployment Workflow
+
+1. Trigger the appropriate GitHub Actions workflow.
+2. The workflow builds a new Docker image.
+3. The image is pushed to **Amazon ECR**, tagged with the **commit SHA**.
+4. **Terraform** picks up the new image tag and deploys it to ECS (for dev/staging) or EC2 (for production).
+
+### How to Trigger a Deployment
+
+1. Push your changes to the target branch (`develop`).
+2. Go to **GitHub Actions** > select the corresponding workflow (`deploy-dev`, `deploy-staging`, or `deploy-prod`).
+3. Click **Run workflow**.
+4. The workflow will automatically:
+
+   * Publish a new image on the `appr-tailor-<env>` ECR
+   * Update the corresponding environment using Terraform
+
+You can track progress directly in the **Actions** tab on GitHub.
+
+### Current Limitations
+
+* The project relies on **outdated package versions**.
+* **Node.js versions** are inconsistent (mix of v14, v16 and v20).
+* The current build originates from an **older Studion image**, which may not align fully with the new infrastructure. This was done to roll the new environment faster.
+
+
 ## Dependencies
 
 - Node.js (>= 16.16.0)
