@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
   container_definitions = jsonencode([
     {
       name  = "tailor"
-      image = local.ecr_tailor_repository.url
+      image = "${local.ecr_tailor_repository.url}:${var.image_tag}"
       portMappings = [
         {
           containerPort = 3000
