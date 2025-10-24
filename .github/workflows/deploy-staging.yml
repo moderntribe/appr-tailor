@@ -52,6 +52,8 @@ jobs:
       - name: Terraform Plan
         working-directory: terraform/staging
         id: plan
+        env:
+          TF_VAR_image_tag: ${{ github.sha }}
         run: |
           terraform plan -out=plan.out
 
@@ -64,5 +66,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform/staging
+        env:
+          TF_VAR_image_tag: ${{ github.sha }}
         run: |
           terraform apply -auto-approve "${{ steps.plan.outputs.plan }}"

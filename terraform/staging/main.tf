@@ -60,6 +60,7 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "PROTOCOL", value = "https" },
         { name = "REVERSE_PROXY_PORT", value = "443" },
         { name = "CORS_ALLOWED_ORIGINS", value = "http://localhost:8080" },  # same as dev
+        { name = "LOG_LEVEL", value = "debug" },
       ]
       secrets = concat(
         [
