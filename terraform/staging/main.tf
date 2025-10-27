@@ -47,20 +47,44 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         }
       ]
       environment = [
+        { name = "AUTH_SALT_ROUNDS", value = "10" },
+        { name = "AUTH_JWT_SCHEME", value = "JWT" },
+        { name = "AUTH_JWT_ISSUER", value = "tailor-staging.advancingpretrial.org" },
+        { name = "AUTH_JWT_COOKIE_NAME", value = "tailor-cookie" },
+        { name = "HOSTNAME", value = "tailor-${var.environment}.advancingpretrial.org" },
+        { name = "OIDC_ENABLED", value = "1" },
+        { name = "OIDC_AUTHORIZATION_ENDPOINT", value = "https://account.test.advancingpretrial.org/authorize" },
+        { name = "OIDC_ISSUER", value = "https://account.test.advancingpretrial.org/" },
+        { name = "OIDC_JWKS_URL", value = "https://account.test.advancingpretrial.org/.well-known/jwks.json" },
+        { name = "OIDC_TOKEN_ENDPOINT", value = "https://account.test.advancingpretrial.org/oauth/token" },
+        { name = "OIDC_LOGOUT_ENDPOINT", value = "https://account.test.advancingpretrial.org/logout" },
+        { name = "OIDC_USERINFO_ENDPOINT", value = "https://account.test.advancingpretrial.org/userinfo" },
+        { name = "OIDC_USERINFO_ENDPOINT", value = "https://account.test.advancingpretrial.org/userinfo" },
+        { name = "OIDC_LOGOUT_ENABLED", value = "1" },
+        { name = "OIDC_POST_LOGOUT_URI_KEY", value = "returnTo" },
+        { name = "OIDC_ALLOW_SIGNUP", value = "0" },
+        { name = "OIDC_DEFAULT_ROLE", value = "ADMIN" },
+        { name = "OIDC_LOGIN_TEXT", value = "Login with APPR" },
+        { name = "EMAIL_SENDER_NAME", value = "APPR Authoring" },
+        { name = "EMAIL_SENDER_ADDRESS", value = "tailor@advancingpretrial.org" },
+        { name = "EMAIL_HOST", value = "email-smtp.us-east-1.amazonaws.com" },
+        { name = "EMAIL_SSL", value = "1" },
+        { name = "STORAGE_PROVIDER", value = "amazon" },
+        { name = "STORAGE_REGION", value = "us-east-2" },
         { name = "STORAGE_PUBLIC_BUCKET", value = "cepp-staging-public" },
         { name = "STORAGE_BUCKET", value = "cepp-staging" },
+        { name = "PREVIEW_URL", value = "https://learn-${var.environment}.advancingpretrial.org/api/v1/preview/" },
+        { name = "LOG_LEVEL", value = "debug" },
+        { name = "FORCE_COLOR", value = "1" },
+        { name = "FLAT_REPO_STRUCTURE", value = "1" },
         { name = "DATABASE_NAME", value = "tailor" },
         { name = "DATABASE_USER", value = "tailor" },
         { name = "DATABASE_HOST", value = local.rds_tailor_info.address },
         { name = "DATABASE_PORT", value = tostring(local.rds_tailor_info.port) },
-        { name = "DATABASE_PASSWORD", value = "tailor" },
         { name = "PORT", value = "3000" },
-        { name = "HOSTNAME", value = "tailor-staging.advancingpretrial.org" },
-        { name = "PREVIEW_URL", value = "https://learn-staging.advancingpretrial.org/api/v1/preview/" },
         { name = "PROTOCOL", value = "https" },
         { name = "REVERSE_PROXY_PORT", value = "443" },
         { name = "CORS_ALLOWED_ORIGINS", value = "http://localhost:8080" },  # same as dev
-        { name = "LOG_LEVEL", value = "debug" },
       ]
       secrets = concat(
         [
@@ -69,12 +93,6 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
             valueFrom = secret_arn
           }
         ]
-        # [
-        #   {
-        #     name      = "DATABASE_PASSWORD"
-        #     valueFrom = "tailor"
-        #   }
-        # ]
       )
       logConfiguration = {
         logDriver = "awslogs"
