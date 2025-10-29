@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '20.3.1'
+  NODE_VERSION: '12.13.0'
 
 jobs:
   build-and-deploy:
@@ -24,11 +24,11 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # - name: Install dependencies
-      #   run: npm install --legacy-peer-deps --include=dev
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
 
-      # - name: Build workspace packages
-      #   run: npx lerna run build
+      - name: Build workspace packages
+        run: npx lerna run build
 
       # - name: Build client
       #   env:
