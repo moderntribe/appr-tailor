@@ -29,9 +29,9 @@ RUN ls -la /usr/src/app
 # COPY --from=install --chown=node:node /usr/src/app/extensions ./extensions
 # COPY --from=install --chown=node:node /usr/src/app/server ./server
 # COPY --from=install --chown=node:node /usr/src/app/client ./client
-# COPY --chown=node:node sequelize.config.js ./
-# COPY --chown=node:node tailor.config.js ./
-# COPY dist ./dist
+COPY --chown=node:node sequelize.config.js ./
+COPY --chown=node:node tailor.config.js ./
+COPY dist ./dist
 ENV PATH=/usr/src/app/node_modules/.bin:$PATH
 
 FROM configure AS run
