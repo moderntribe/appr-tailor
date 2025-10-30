@@ -16,20 +16,21 @@ COPY server ./server
 COPY client ./client
 COPY lerna.json ./
 RUN npm install --legacy-peer-deps
-RUN npm install sequelize-cli@6.6.2 --save
 
 FROM base AS configure
 WORKDIR /usr/src/app
-COPY --from=install --chown=node:node /usr/src/app/node_modules ./node_modules
-COPY --from=install --chown=node:node /usr/src/app/package.json ./
-COPY --from=install --chown=node:node /usr/src/app/common ./common
-COPY --from=install --chown=node:node /usr/src/app/config ./config
-COPY --from=install --chown=node:node /usr/src/app/extensions ./extensions
-COPY --from=install --chown=node:node /usr/src/app/server ./server
-COPY --from=install --chown=node:node /usr/src/app/client ./client
-COPY --chown=node:node sequelize.config.js ./
-COPY --chown=node:node tailor.config.js ./
-COPY dist ./dist
+COPY --from=install --chown=node:node /usr/src/app /usr/src/app
+ENV PATH=/usr/src/app/node_modules/.bin:$PATH
+# COPY --from=install --chown=node:node /usr/src/app/node_modules ./node_modules
+# COPY --from=install --chown=node:node /usr/src/app/package.json ./
+# COPY --from=install --chown=node:node /usr/src/app/common ./common
+# COPY --from=install --chown=node:node /usr/src/app/config ./config
+# COPY --from=install --chown=node:node /usr/src/app/extensions ./extensions
+# COPY --from=install --chown=node:node /usr/src/app/server ./server
+# COPY --from=install --chown=node:node /usr/src/app/client ./client
+# COPY --chown=node:node sequelize.config.js ./
+# COPY --chown=node:node tailor.config.js ./
+# COPY dist ./dist
 
 FROM configure AS run
 ENV NODE_ENV=production
