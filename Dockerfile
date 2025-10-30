@@ -35,4 +35,4 @@ ENV PATH=/usr/src/app/node_modules/.bin:$PATH
 FROM configure AS run
 ENV NODE_ENV=production
 USER node
-CMD ["sh", "-c", "npm run db -- migrate && node -r ./server/script/preflight ./server/index.js"]
+CMD ["sh", "-c", "npx sequelize-cli db:migrate && node -r ./server/script/preflight ./server/index.js"]
