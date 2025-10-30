@@ -38,7 +38,7 @@ jobs:
         run: rm -f package-lock.json
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       - name: Install NX native dependencies
         run: npm install @nx/nx-linux-x64-gnu --save-dev
