@@ -15,7 +15,7 @@ COPY extensions ./extensions
 COPY server ./server
 COPY client ./client
 COPY lerna.json ./
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps --include=dev
 
 FROM base AS configure
 WORKDIR /usr/src/app
@@ -35,4 +35,4 @@ ENV PATH=/usr/src/app/node_modules/.bin:$PATH
 FROM configure AS run
 ENV NODE_ENV=production
 USER node
-CMD ["sh", "-c", "npm run db migrate && node -r ./server/script/preflight ./server/index.js"]
+CMD ["sh", "-c", "npm run db -- migrate && node -r ./server/script/preflight ./server/index.js"]
