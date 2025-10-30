@@ -38,10 +38,14 @@ jobs:
         run: rm -f package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Install NX native dependencies
         run: npm install @nx/nx-linux-x64-gnu --save-dev
+
+      - name: Add missing runtime dependencies
+        run: |
+          npm install dargs minimist safe-require sequelize-cli --save --legacy-peer-deps
 
       - name: Build workspace packages
         run: npm run packages:build
