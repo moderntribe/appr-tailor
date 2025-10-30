@@ -14,7 +14,7 @@
     "clean": "del-cli dist/* !dist/.gitkeep",
     "cy:open": "npx cypress open",
     "cy:run": "npx cypress run",
-    "db": "node --import ./server/script/preflight.js ./server/script/sequelize.js",
+    "db": "npx sequelize-cli",
     "db:reset": "npm run db drop && npm run db create && npm run db migrate",
     "db:seed": "npm run db seed:all",
     "debug:server": "nodemon --inspect --import ./server/script/preflight.js ./server/index.js",
