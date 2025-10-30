@@ -15,8 +15,8 @@ COPY extensions ./extensions
 COPY server ./server
 COPY client ./client
 COPY lerna.json ./
-RUN npm install --legacy-peer-deps 
-RUN npm install -g sequelize-cli@6.6.2
+RUN npm install --legacy-peer-deps
+RUN npm install sequelize-cli@6.6.2 --save
 
 FROM base AS configure
 WORKDIR /usr/src/app
