@@ -20,7 +20,8 @@ RUN npm install --legacy-peer-deps --include=dev
 FROM base AS configure
 WORKDIR /usr/src/app
 COPY --from=install --chown=node:node /usr/src/app /usr/src/app
-ENV PATH=/usr/src/app/node_modules/.bin:$PATH
+RUN chown -R node:node /usr/src/app
+RUN ls -la /usr/src/app
 # COPY --from=install --chown=node:node /usr/src/app/node_modules ./node_modules
 # COPY --from=install --chown=node:node /usr/src/app/package.json ./
 # COPY --from=install --chown=node:node /usr/src/app/common ./common
@@ -31,6 +32,7 @@ ENV PATH=/usr/src/app/node_modules/.bin:$PATH
 # COPY --chown=node:node sequelize.config.js ./
 # COPY --chown=node:node tailor.config.js ./
 # COPY dist ./dist
+ENV PATH=/usr/src/app/node_modules/.bin:$PATH
 
 FROM configure AS run
 ENV NODE_ENV=production
