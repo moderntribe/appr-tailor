@@ -1,29 +1,28 @@
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue2';
+import { resolve } from 'path';
 
-const _dirname = fileURLToPath(new URL('.', import.meta.url));
-
-/**
- * @type {import('vite').UserConfig}
- */
-export default {
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
   build: {
     lib: {
-      entry: './src/index.js',
-      name: 'TailorCoreComponents',
-      formats: ['es', 'cjs', 'umd']
+      entry: resolve(__dirname, 'src/index.js'),
+      name: 'CoreComponents',
+      formats: ['es', 'cjs'],
+      fileName: (format) => `core-components.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
-      // Externalize deps that shouldn't be bundled
-      external: ['vue', 'vuetify', 'vee-validate']
-    }
+      external: ['vue'],
+      output: {
+        globals: {
+          vue: 'Vue',
+        },
+      },
+    },
   },
-  resolve: {
-    alias: [{
-      find: '@/',
-      replacement: path.join(_dirname, './src/')
-    }]
-  },
-  plugins: [vue()]
-};
+});

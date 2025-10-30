@@ -1,482 +1,260 @@
 'use strict';
 
-const CONTENT_CONTAINERS = {
-  GLOSSARY_PAGE: {
-    type: 'GLOSSARY_PAGE',
-    label: 'Glossary Content',
-    types: ['GLOSSARY_ITEM'],
-    required: true
-  },
-  RESOURCE_PAGE: {
-    templateId: 'CEPP_CONTAINER',
-    type: 'RESOURCE_PAGE',
-    label: 'Resource Content',
-    displayHeading: true,
-    required: true,
-    config: { types: ['RESOURCE_BLOCK'] }
-  },
-  CONTENT_PAGE: {
-    templateId: 'CEPP_CONTAINER',
-    type: 'CEPP_CONTAINER',
-    label: 'Content',
-    displayHeading: true,
-    required: true,
-    config: { types: ['CONTENT_BLOCK', 'TASK_BLOCK'] }
-  },
-  INTRO: {
-    templateId: 'CEPP_CONTAINER',
-    type: 'INTRO',
-    label: 'Introduction',
-    required: false,
-    displayHeading: true,
-    multiple: false,
-    config: {
-      types: ['CONTENT_BLOCK', 'TASK_BLOCK'],
-      allowDelete: true,
-      bottomDivider: true
+// ----------------------------------------------------
+// Meta inputs
+// ----------------------------------------------------
+
+const getInputMeta = () => ({
+  type: 'INPUT',
+  key: 'inputField',
+  label: 'Test input',
+  placeholder: 'Click to edit...',
+  validate: { rules: { required: false } }
+});
+
+const getTextareaMeta = () => ({
+  type: 'TEXTAREA',
+  key: 'textareaField',
+  label: 'Test textarea',
+  placeholder: 'Click to edit...',
+  validate: { rules: { max: 250 } }
+});
+
+const getSelectMeta = () => ({
+  type: 'SELECT',
+  key: 'selectField',
+  label: 'Test select',
+  placeholder: 'Select...',
+  options: [{
+    label: '15min',
+    value: 15
+  }, {
+    label: '30min',
+    value: 30
+  }, {
+    label: '45min',
+    value: 45
+  }]
+});
+
+const getMultiselectMeta = () => ({
+  type: 'MULTISELECT',
+  key: 'multiselectField',
+  label: 'Test multiselect',
+  options: [
+    { value: 'OPT1', label: 'Option 1' },
+    { value: 'OPT2', label: 'Option 2' },
+    { value: 'OPT3', label: 'Option 3' }
+  ]
+});
+
+const getSwitchMeta = () => ({
+  type: 'SWITCH',
+  key: 'switchField',
+  label: 'Test switch'
+});
+
+const getCheckboxMeta = () => ({
+  type: 'CHECKBOX',
+  key: 'checkboxField',
+  label: 'Test checkbox',
+  description: 'Option selected'
+});
+
+const getFileMeta = () => ({
+  type: 'FILE',
+  key: 'fileField',
+  label: 'Test file attachment',
+  placeholder: 'Click to upload the image',
+  validate: {
+    rules: {
+      ext: ['jpg', 'jpeg', 'png']
     }
-  },
-  DELIVERABLE_PAGE: {
-    templateId: 'CEPP_CONTAINER',
-    type: 'CEPP_DELIVERABLE_CONTAINER',
-    label: 'Deliverable/Activity Content',
-    displayHeading: true,
-    required: true,
-    config: { types: ['DELIVERABLE', 'CONTENT_BLOCK', 'TASK_BLOCK'] }
   }
+});
+
+const getDatetimeMeta = () => ({
+  type: 'DATETIME',
+  key: 'datetimeField',
+  label: 'Test date selection'
+});
+
+const getColorMeta = () => ({
+  type: 'COLOR',
+  key: 'colorField',
+  label: 'Test color selection'
+});
+
+const getHtmlMeta = () => ({
+  type: 'HTML',
+  key: 'htmlField',
+  label: 'Test html input'
+});
+
+// ----------------------------------------------------
+// Activity type definition
+// ----------------------------------------------------
+
+const ACTIVITY_TYPE = {
+  // Outline
+  MODULE: 'MODULE',
+  LESSON: 'LESSON',
+  PAGE: 'PAGE',
+  KNOWLEDGE_CHECK: 'KNOWLEDGE_CHECK',
+  // Content containers
+  INTRO: 'INTRO',
+  CONTENT_SECTION: 'CONTENT_SECTION',
+  ASSESSMENT_POOL: 'ASSESSMENT_POOL',
+  EXAM: 'EXAM'
 };
 
-const CONTENT = {
-  type: 'CONTENT_PAGE',
-  label: 'Content Page',
-  hasAssessments: false,
-  hasExams: false,
-  meta: [
-    getNameMeta('Content page title'),
-    getTimeMeta('Content page'),
-    getRolesMeta()
-  ],
-  contentContainers: [CONTENT_CONTAINERS.CONTENT_PAGE.type],
-  color: '#b265ff'
-};
+// ----------------------------------------------------
+// Content containers
+// ----------------------------------------------------
 
-const MEETING_PREP = {
-  type: 'MEETING_PREP',
-  label: 'Meeting Preparation',
-  hasAssessments: false,
-  hasExams: false,
-  meta: [
-    getNameMeta('Meeting preparation title'),
-    getTimeMeta('Meeting preparation'),
-    getRolesMeta()
-  ],
-  contentContainers: [
-    CONTENT_CONTAINERS.INTRO.type,
-    CONTENT_CONTAINERS.CONTENT_PAGE.type
-  ],
-  color: '#f08d81'
-};
+const getSectionContainer = () => ({
+  type: ACTIVITY_TYPE.CONTENT_SECTION,
+  label: 'Section',
+  multiple: true,
+  types: [
+    'JODIT_HTML', 'IMAGE', 'VIDEO', 'EMBED', 'PDF', 'AUDIO',
+    'SCORM', 'BREAK', 'ASSESSMENT', 'ACCORDION', 'CAROUSEL',
+    'MODAL', 'HTML'
+  ]
+});
 
-const MEETING = {
-  type: 'MEETING',
-  label: 'Meeting',
-  hasAssessments: false,
-  hasExams: false,
+const getIntroContainer = () => ({
+  type: ACTIVITY_TYPE.INTRO,
+  label: 'Intro',
+  layout: false,
+  types: ['JODIT_HTML', 'IMAGE', 'VIDEO', 'EMBED']
+});
+
+const getExamContainer = () => ({
+  type: ACTIVITY_TYPE.EXAM,
+  label: 'Exam',
+  displayHeading: true,
+  multiple: true,
+  required: false,
+  publishedAs: 'exam'
+});
+
+const getAssessmentPoolContainer = () => ({
+  type: ACTIVITY_TYPE.ASSESSMENT_POOL,
+  label: 'Assessments',
+  publishedAs: 'assessments'
+});
+
+// ----------------------------------------------------
+// Activity outline configuration
+// ----------------------------------------------------
+
+const getModuleActivityConfig = () => ({
+  type: ACTIVITY_TYPE.MODULE,
+  label: 'Module',
+  rootLevel: true,
+  isTrackedInWorkflow: true,
+  color: '#536DFE',
   meta: [
-    getNameMeta('Meeting name'),
-    getTimeMeta('Meeting'),
-    getRolesMeta()
+    getInputMeta(),
+    getTextareaMeta(),
+    getSelectMeta(),
+    getMultiselectMeta(),
+    getSwitchMeta(),
+    getCheckboxMeta(),
+    getFileMeta(),
+    getDatetimeMeta(),
+    getHtmlMeta(),
+    getColorMeta()
   ],
   relationships: [{
-    type: 'meetingPrep',
-    label: 'Meeting Prep',
-    placeholder: 'Select meeting prep',
-    multiple: false,
-    allowEmpty: false,
-    allowedTypes: ['MEETING_PREP']
+    type: 'prerequisites',
+    label: 'Prerequisites',
+    multiple: true,
+    searchable: true,
+    allowEmpty: true,
+    placeholder: 'Click to select',
+    allowCircularLinks: false,
+    allowInsideLineage: true,
+    allowedTypes: [ACTIVITY_TYPE.MODULE]
   }],
   contentContainers: [
-    CONTENT_CONTAINERS.INTRO.type,
-    CONTENT_CONTAINERS.CONTENT_PAGE.type
+    ACTIVITY_TYPE.INTRO
   ],
-  color: '#ea6a66'
-};
-
-const DELIVERABLE = {
-  type: 'DELIVERABLE',
-  label: 'Deliverable/Activity',
-  hasAssessments: false,
-  hasExams: false,
-  meta: [
-    getNameMeta('Deliverable/Activity name'),
-    getTimeMeta('Deliverable/Activity'),
-    getRolesMeta()
-  ],
-  contentContainers: [CONTENT_CONTAINERS.DELIVERABLE_PAGE.type],
-  color: '#60c6ce'
-};
-
-const SECTION = {
-  type: 'SECTION',
-  label: 'Section',
-  rootLevel: true,
-  hasAssessments: false,
-  hasExams: false,
   subLevels: [
-    CONTENT.type,
-    MEETING_PREP.type,
-    MEETING.type,
-    DELIVERABLE.type
-  ],
-  meta: [
-    getNameMeta('Section name'),
-    {
-      key: 'sectionGroup',
-      type: 'INPUT',
-      label: 'Section group label',
-      placeholder: 'Enter section group label',
-      validate: { max: 150 }
-    }
-  ],
-  color: '#2f5b7b'
-};
+    ACTIVITY_TYPE.MODULE,
+    ACTIVITY_TYPE.LESSON,
+    ACTIVITY_TYPE.KNOWLEDGE_CHECK,
+    ACTIVITY_TYPE.PAGE
+  ]
+});
 
-const GLOSSARY = {
-  type: 'GLOSSARY',
-  label: 'Glossary Page',
-  rootLevel: true,
-  hasAssessments: false,
-  hasExams: false,
+const getLessonActivityConfig = () => ({
+  type: ACTIVITY_TYPE.LESSON,
+  label: 'Lesson',
+  color: '#FFA000',
+  isTrackedInWorkflow: true,
   contentContainers: [
-    CONTENT_CONTAINERS.GLOSSARY_PAGE.type
-  ],
-  color: '#765f8a'
-};
+    ACTIVITY_TYPE.INTRO,
+    ACTIVITY_TYPE.CONTENT_SECTION,
+    ACTIVITY_TYPE.ASSESSMENT_POOL
+  ]
+});
 
-const RESOURCE = {
-  type: 'RESOURCE',
-  label: 'Resource Page',
+const getPageActivityConfig = () => ({
+  type: ACTIVITY_TYPE.PAGE,
+  label: 'Page',
   rootLevel: true,
-  hasAssessments: false,
-  hasExams: false,
-  contentContainers: [CONTENT_CONTAINERS.RESOURCE_PAGE.type],
-  color: '#854239'
+  color: '#00BFA5',
+  isTrackedInWorkflow: true,
+  contentContainers: [ACTIVITY_TYPE.CONTENT_SECTION]
+});
+
+const getKnowledgeCheckActivityConfig = () => ({
+  type: ACTIVITY_TYPE.KNOWLEDGE_CHECK,
+  label: 'Knowledge check',
+  isTrackedInWorkflow: true,
+  color: '#E91E63',
+  contentContainers: [ACTIVITY_TYPE.EXAM]
+});
+
+// ----------------------------------------------------
+// Workflow configuration
+// ----------------------------------------------------
+
+const TEST_WORKFLOW = {
+  id: 'TEST_WORKFLOW',
+  statuses: [
+    { id: 'TODO', label: 'Todo', default: true, color: '#E91E63' },
+    { id: 'IN_PROGRESS', label: 'In progress', color: '#039BE5' },
+    { id: 'REVIEW', label: 'Review', color: '#00BFA5' },
+    { id: 'DONE', label: 'Done', color: '#00BFA5' }
+  ]
 };
 
-const CEPP_PROJECT_SCHEMA = {
-  id: 'CEPP_PROJECT',
-  name: 'CEPP Project',
+// ----------------------------------------------------
+// Schema definition
+// ----------------------------------------------------
+
+const TEST_SCHEMA = {
+  id: 'TEST_SCHEMA',
+  workflowId: TEST_WORKFLOW.id,
+  name: 'Test course structure',
   structure: [
-    GLOSSARY,
-    RESOURCE,
-    SECTION,
-    CONTENT,
-    MEETING_PREP,
-    MEETING,
-    DELIVERABLE
+    getModuleActivityConfig(),
+    getLessonActivityConfig(),
+    getKnowledgeCheckActivityConfig(),
+    getPageActivityConfig()
   ],
   contentContainers: [
-    CONTENT_CONTAINERS.GLOSSARY_PAGE,
-    CONTENT_CONTAINERS.RESOURCE_PAGE,
-    CONTENT_CONTAINERS.CONTENT_PAGE,
-    CONTENT_CONTAINERS.INTRO,
-    CONTENT_CONTAINERS.DELIVERABLE_PAGE
-  ],
-  elementMeta: [{
-    type: 'IMAGE',
-    inputs: getImageMeta()
-  }, {
-    type: 'PDF',
-    inputs: getPDFMeta()
-  }, {
-    type: 'VIDEO',
-    inputs: getVideoMeta()
-  }, {
-    type: 'AUDIO',
-    inputs: getAudioMeta()
-  }, {
-    type: 'JODIT_HTML',
-    inputs: getJoditHtmlMeta(),
-    relationships: [{
-      type: 'link',
-      key: 'link',
-      label: 'Element link (###LINK:title###)',
-      multiple: false,
-      allowedTypes: []
-    }]
-  }, {
-    type: 'ACCORDION',
-    inputs: getAccordionMeta()
-  }, {
-    type: 'VIDEO_PLAYLIST',
-    inputs: getVideoPlaylistMeta()
-  }, {
-    type: 'BREAK',
-    inputs: getBreakMeta()
-  }]
+    getSectionContainer(),
+    getIntroContainer(),
+    getExamContainer(),
+    getAssessmentPoolContainer()
+  ]
 };
 
 module.exports = {
-  SCHEMAS: [CEPP_PROJECT_SCHEMA],
-  WORKFLOWS: []
+  SCHEMAS: [TEST_SCHEMA],
+  WORKFLOWS: [TEST_WORKFLOW]
 };
-
-function getNameMeta(label = '') {
-  return {
-    key: 'name',
-    type: 'INPUT',
-    label,
-    placeholder: `Enter ${label.toLowerCase()}...`,
-    validate: { required: true, max: 150 }
-  };
-}
-
-function getTimeMeta(label = '', required = false) {
-  return {
-    key: 'time',
-    type: 'INPUT',
-    label: `${label} time`,
-    placeholder: `Enter ${label.toLowerCase()} time in minutes...`,
-    validate: { required, numeric: true }
-  };
-}
-
-function getRolesMeta() {
-  const roles = [
-    { value: 'TA', label: 'TA Provider (Learning)' },
-    { value: 'TEAM_LEAD', label: 'Team Lead (Learning)' },
-    { value: 'TEAM_MEMBER', label: 'Team Member (Learning)' },
-    { value: 'CHAMPION', label: 'Project Champion (Learning)' },
-    { value: 'TRAINING_PARTICIPANT', label: 'Training Participant (Training)' },
-    { value: 'FACULTY', label: 'Faculty (Training)' },
-    { value: 'FACULTY_LEAD', label: 'Faculty Lead (Training)' },
-    { value: 'PRODUCTION_MANAGER', label: 'Production Manager (Training)' }
-  ];
-
-  return {
-    key: 'roles',
-    type: 'MULTISELECT',
-    label: 'Select roles or leave empty to allow all',
-    options: roles
-  };
-}
-
-function getJoditHtmlMeta() {
-  const style = {
-    key: 'style',
-    type: 'CEPP_HTML_STYLE'
-  };
-
-  const removeTopPadding = {
-    key: 'removeTopPadding',
-    type: 'SWITCH',
-    label: 'Remove element top padding'
-  };
-
-  const removeBottomPadding = {
-    key: 'removeBottomPadding',
-    type: 'SWITCH',
-    label: 'Remove element bottom padding'
-  };
-
-  return [
-    style,
-    removeTopPadding,
-    removeBottomPadding
-  ];
-}
-
-function getAccordionMeta() {
-  const styles = {
-    key: 'accordionStyle',
-    type: 'SELECT',
-    label: 'Select accordion style',
-    options: [{
-      label: 'knowledge check',
-      value: 'knowledgeCheck'
-    }, {
-      label: 'optional content',
-      value: 'optionalContent'
-    }]
-  };
-
-  const colors = {
-    key: 'color',
-    type: 'SELECT',
-    label: 'Select Accordion color',
-    options: [{
-      label: 'dark blue',
-      value: '#343F79'
-    }, {
-      label: 'light blue',
-      value: '#F7F9FB'
-    }]
-  };
-
-  const customColor = {
-    key: 'customColor',
-    type: 'COLOR',
-    label: 'Pick a custom color'
-  };
-
-  return [
-    styles,
-    colors,
-    customColor
-  ];
-}
-
-function getAudioMeta() {
-  return [{
-    key: 'transcriptFile',
-    type: 'FILE',
-    label: 'Transcript',
-    placeholder: 'Click to upload transcript file'
-  }];
-}
-
-function getVideoMeta() {
-  const type = {
-    key: 'type',
-    type: 'SELECT',
-    label: 'Select video type',
-    options: [{
-      label: 'regular (full-size)',
-      value: 'regular'
-    }, {
-      label: 'expandable (not applicable in playlist)',
-      value: 'expandable'
-    }]
-  };
-
-  const title = {
-    key: 'title',
-    type: 'INPUT',
-    label: 'Title',
-    placeholder: 'Enter video title'
-  };
-
-  const description = {
-    key: 'description',
-    type: 'TEXTAREA',
-    label: 'Description',
-    placeholder: 'Click to add description...'
-  };
-
-  const transcript = {
-    key: 'transcriptFile',
-    type: 'FILE',
-    label: 'Transcript',
-    placeholder: 'Click to upload transcript file'
-  };
-
-  const caption = {
-    key: 'caption',
-    type: 'FILE',
-    label: 'Caption',
-    placeholder: 'Click to upload text file',
-    validate: { ext: ['vtt'] }
-  };
-
-  const thumbnail = {
-    key: 'thumbnail',
-    type: 'FILE',
-    label: 'Thumbnail',
-    placeholder: 'Click to upload thumbnail',
-    validate: { ext: ['jpg', 'jpeg', 'png'] }
-  };
-
-  const backgroundColor = {
-    key: 'backgroundColor',
-    type: 'COLOR',
-    label: 'Pick a background color'
-  };
-
-  const borderColor = {
-    key: 'borderColor',
-    type: 'COLOR',
-    label: 'Pick a border color'
-  };
-
-  return [
-    type,
-    title,
-    description,
-    transcript,
-    caption,
-    thumbnail,
-    backgroundColor,
-    borderColor
-  ];
-}
-
-function getImageMeta() {
-  const caption = {
-    key: 'caption',
-    type: 'INPUT',
-    label: 'Caption',
-    placeholder: 'Enter image caption'
-  };
-
-  const altText = {
-    key: 'altText',
-    type: 'INPUT',
-    label: 'Alt text',
-    placeholder: 'Enter image alt text'
-  };
-
-  return [caption, altText];
-}
-
-function getVideoPlaylistMeta() {
-  const title = {
-    key: 'title',
-    type: 'INPUT',
-    label: 'Title',
-    placeholder: 'Enter Playlist title'
-  };
-
-  const description = {
-    key: 'description',
-    type: 'INPUT',
-    label: 'Description',
-    placeholder: 'Enter Playlist Description'
-  };
-
-  const backgroundColor = {
-    key: 'backgroundColor',
-    type: 'COLOR',
-    label: 'Pick a background color'
-  };
-
-  const borderColor = {
-    key: 'borderColor',
-    type: 'COLOR',
-    label: 'Pick a border color'
-  };
-
-  return [
-    title,
-    description,
-    backgroundColor,
-    borderColor
-  ];
-}
-
-function getBreakMeta() {
-  return [{
-    key: 'height',
-    type: 'INPUT',
-    label: 'Height(px)',
-    placeholder: 'Enter Break height in pixels'
-  }];
-}
-
-function getPDFMeta() {
-  return [{
-    key: 'title',
-    type: 'INPUT',
-    label: 'Title',
-    placeholder: 'Enter PDF title'
-  }];
-}

@@ -1,6 +1,6 @@
 /* eslint-disable sort-imports */
 import './polyfills';
-import '@/utils/validation';
+import './utils/validation';
 
 import { asset as assetApi, exposedApi } from '@/api';
 import { SCHEMAS, schema } from 'tailor-config';

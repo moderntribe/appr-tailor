@@ -40,31 +40,31 @@ const alias = [
   },
   {
     find: '@/',
-    replacement: path.join(_dirname, 'client/')
+    replacement: path.resolve(_dirname, 'client') + '/'
   },
   {
     find: 'client/',
-    replacement: path.join(_dirname, 'client/')
+    replacement: path.resolve(_dirname, 'client') + '/'
   },
   {
     find: 'components/',
-    replacement: path.join(_dirname, 'client/components/')
+    replacement: path.resolve(_dirname, 'client/components') + '/'
   },
   {
     find: 'utils/',
-    replacement: path.join(_dirname, 'client/utils/')
+    replacement: path.resolve(_dirname, 'client/utils') + '/'
   },
   {
     find: 'assets/',
-    replacement: path.join(_dirname, 'client/assets/')
+    replacement: path.resolve(_dirname, 'client/assets') + '/'
   },
   {
     find: 'shared/',
-    replacement: path.join(_dirname, 'config/shared/')
+    replacement: path.resolve(_dirname, 'config/shared') + '/'
   },
   {
     find: 'tailor-config',
-    replacement: path.join(_dirname, 'config/shared/tailor.loader.js')
+    replacement: path.resolve(_dirname, 'config/shared/tailor.loader.js')
   },
   {
     find: /^~.+/,

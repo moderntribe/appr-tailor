@@ -4,8 +4,15 @@ import * as mail from './mail.js';
 import * as storage from './storage.js';
 import * as store from './store.js';
 import * as tce from './tce.js';
-import isLocalhost from 'is-localhost';
 import parse from 'url-parse';
+
+// Replace is-localhost with a simple function
+function isLocalhost(hostname) {
+  return hostname === 'localhost' ||
+         hostname === '127.0.0.1' ||
+         hostname === '::1' ||
+         hostname.endsWith('.local');
+}
 
 const hostname = resolveHostname();
 const protocol = resolveProtocol(hostname);
@@ -24,6 +31,7 @@ function resolveHostname() {
 function resolveProtocol(hostname) {
   const { PROTOCOL } = process.env;
   if (PROTOCOL) return PROTOCOL;
+  
   return isLocalhost(hostname) ? 'http' : 'https';
 }
 
