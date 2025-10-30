@@ -7,8 +7,12 @@ resource "aws_ecs_service" "tailor_service" {
   launch_type                        = "FARGATE"
   deployment_minimum_healthy_percent = 0
   enable_execute_command             = true
+  force_new_deployment               = true
 
-  force_new_deployment = true
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   network_configuration {
     subnets          = local.network_info.private_subnets
