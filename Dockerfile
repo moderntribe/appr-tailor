@@ -16,6 +16,7 @@ COPY server ./server
 COPY client ./client
 COPY lerna.json ./
 RUN npm ci --legacy-peer-deps
+RUN npm install dargs minimist safe-require sequelize-cli --save --legacy-peer-deps
 
 FROM base AS configure
 WORKDIR /usr/src/app
