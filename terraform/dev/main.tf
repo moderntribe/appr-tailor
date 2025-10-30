@@ -77,7 +77,7 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "FLAT_REPO_STRUCTURE", value = "1" },
         { name = "STORAGE_PUBLIC_BUCKET", value = "dev.cepp-public-20240223085605705200000001" },
         { name = "DATABASE_NAME", value = "tailor" },
-        { name = "DATABASE_USER", value = "tailor" },
+        { name = "DATABASE_USER", value = "cepp_dev" },
         { name = "DATABASE_HOST", value = local.rds_tailor_info.address },
         { name = "DATABASE_PORT", value = tostring(local.rds_tailor_info.port) },
         { name = "PORT", value = "3000" },
