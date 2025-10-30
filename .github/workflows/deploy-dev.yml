@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '12.13.0'
+  NODE_VERSION: '20.3.1'
 
 jobs:
   build-and-deploy:
@@ -26,13 +26,13 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 12.13.0
-
+          node-version: 20.3.1
+      
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build workspace packages
-        run: npm run build
+        run: npm run packages:build
 
       - name: Build client
         env:
