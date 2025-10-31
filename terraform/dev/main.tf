@@ -84,6 +84,7 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "DATABASE_USER", value = "cepp_dev" },
         { name = "DATABASE_HOST", value = local.rds_tailor_info.address },
         { name = "DATABASE_PORT", value = tostring(local.rds_tailor_info.port) },
+        { name = "DATABASE_ADAPTER", value = "postgres" },
         { name = "PORT", value = "3000" },
         { name = "PROTOCOL", value = "https" },
         { name = "REVERSE_PROXY_PORT", value = "443" },
