@@ -1,5 +1,5 @@
 import * as fs from 'node:fs';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { html } from './formatters.js';
 import map from 'lodash/map.js';
 import mapKeys from 'lodash/mapKeys.js';
