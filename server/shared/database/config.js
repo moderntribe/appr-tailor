@@ -1,7 +1,5 @@
-'use strict';
-
-require ('dotenv/config');
-const { createLogger, Level } = require('../logger.js');
+import 'dotenv/config';
+import { createLogger, Level } from '../logger.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const logger = createLogger('db', { level: Level.DEBUG });
@@ -38,10 +36,3 @@ function parseConfig(config = process.env) {
     dialect: config.DATABASE_ADAPTER || 'postgres'
   };
 }
-
-module.exports = {
-  ...config,
-  migrationStorageTableName,
-  benchmark,
-  logging
-};

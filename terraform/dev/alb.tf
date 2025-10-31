@@ -14,12 +14,11 @@ resource "aws_lb" "tailor_lb" {
 }
 
 resource "aws_lb_target_group" "tailor_tg" {
-  name                 = local.tailor_name
-  port                 = 3000
-  protocol             = "HTTP"
-  vpc_id               = local.network_info.vpc_id
-  target_type          = "ip"
-  deregistration_delay = 0
+  name        = local.tailor_name
+  port        = 3000
+  protocol    = "HTTP"
+  vpc_id      = local.network_info.vpc_id
+  target_type = "ip"
 
   health_check {
     enabled             = true
