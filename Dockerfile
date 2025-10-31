@@ -37,4 +37,7 @@ ENV PATH=/usr/src/app/node_modules/.bin:$PATH
 FROM configure AS run
 ENV NODE_ENV=production
 USER node
+RUN ls -la ./server
+RUN ls -la ./server/shared
+RUN ls -la ./server/shared/database && cat ./server/shared/database/config.js
 CMD ["sh", "-c", "npx sequelize-cli db:migrate --config ./sequelize.config.js --dialect postgres && node -r ./server/script/preflight ./server/index.js"]
