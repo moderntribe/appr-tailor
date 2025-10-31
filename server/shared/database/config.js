@@ -23,7 +23,13 @@ export default {
 
 function parseConfig(config = process.env) {
   const DATABASE_URI = config.DATABASE_URI || config.POSTGRES_URI;
-  if (DATABASE_URI) return { url: DATABASE_URI, dialect: 'postgres' };
+  if (DATABASE_URI) return {
+    url: DATABASE_URI,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: { rejectUnauthorized: false } // allow RDS SSL
+    }
+  };
   if (!config.DATABASE_NAME) {
     throw new TypeError(`Invalid \`DATABASE_NAME\` provided: ${config.DATABASE_NAME}`);
   }
