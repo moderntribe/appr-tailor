@@ -18,7 +18,7 @@ RUN npm install --legacy-peer-deps --ignore-scripts --force && \
     npm install ajv@7.2.4 --force && \
     npm rebuild bcrypt --build-from-source
 
-# Install runtime CLI tools globally and link to local node_modules  
+# Install runtime CLI tools globally and link to local node_modules
 RUN npm install -g sequelize-cli@6.6.2 && \
     mkdir -p node_modules && \
     ln -sf /usr/local/lib/node_modules/sequelize-cli node_modules/sequelize-cli
@@ -38,4 +38,5 @@ COPY --chown=node:node dist ./dist
 FROM configure AS run
 ENV NODE_ENV=production
 USER node
-CMD ["sh", "-c", "npx sequelize-cli db:migrate --config sequelize.config.js --migrations-path server/shared/database/migrations --seeders-path server/shared/database/seeds && node --import ./server/script/preflight.js ./server/index.js"]
+# CMD ["sh", "-c", "npx sequelize-cli db:migrate --config sequelize.config.js --migrations-path server/shared/database/migrations --seeders-path server/shared/database/seeds && node --import ./server/script/preflight.js ./server/index.js"]
+CMD ["sh", "-c", "npx sequelize-cli db:migrate --config sequelize.config.js --migrations-path server/shared/database/migrations --seeders-path server/shared/database/seeds --fake && node --import ./server/script/preflight.js ./server/index.js"]
