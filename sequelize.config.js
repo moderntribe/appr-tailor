@@ -11,7 +11,13 @@ const config = {
     password: process.env.DATABASE_PASSWORD,
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT,
-    dialect: process.env.DATABASE_ADAPTER || 'postgres'
+    dialect: process.env.DATABASE_ADAPTER || 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // if you don’t have the RDS CA cert
+      }
+    }
   },
   production: {
     database: process.env.DATABASE_NAME,
@@ -19,7 +25,13 @@ const config = {
     password: process.env.DATABASE_PASSWORD,
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT,
-    dialect: process.env.DATABASE_ADAPTER || 'postgres'
+    dialect: process.env.DATABASE_ADAPTER || 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // if you don’t have the RDS CA cert
+      }
+    }
   }
 };
 
