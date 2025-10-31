@@ -6,7 +6,6 @@ resource "aws_ecs_service" "tailor_service" {
   desired_count                      = 1
   launch_type                        = "FARGATE"
   deployment_minimum_healthy_percent = 0
-  deployment_maximum_percent = 100
   enable_execute_command             = true
   force_new_deployment               = true
 
