@@ -51,6 +51,11 @@ if (storageProxy.isSelfHosted) {
 // Mount main router.
 app.use('/api', requestLogger, router);
 
+// Healthcheck route
+app.use('/healthcheck', (_req, res) => {
+  res.status(200).send();
+});
+
 // Global error handler.
 app.use(errorHandler);
 
