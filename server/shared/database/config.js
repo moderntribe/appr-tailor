@@ -39,6 +39,9 @@ function parseConfig(config = process.env) {
     password: config.DATABASE_PASSWORD,
     host: config.DATABASE_HOST,
     port: config.DATABASE_PORT,
-    dialect: config.DATABASE_ADAPTER || 'postgres'
+    dialect: config.DATABASE_ADAPTER || 'postgres',
+    dialectOptions: {
+      ssl: { rejectUnauthorized: false } // allow RDS SSL
+    }
   };
 }
