@@ -31,6 +31,7 @@ COPY --chown=node:node config ./config
 COPY --chown=node:node extensions ./extensions
 COPY --chown=node:node server ./server
 COPY --chown=node:node client ./client
+COPY --chown=node:node packages ./packages
 
 # Copy built client assets (created by 'npm run build' in CI)
 COPY --chown=node:node dist ./dist
