@@ -44,12 +44,13 @@ It's aliveeeee 🚀
 `.trim();
 
 function welcome(name, version) {
-  const options = {
-    padding: 2,
-    margin: 1,
-    borderStyle: 'double',
-    borderColor: 'blue',
-    align: 'left'
-  };
+  // const options = {
+  //   padding: 2,
+  //   margin: 1,
+  //   borderStyle: 'double',
+  //   borderColor: 'blue',
+  //   align: 'left'
+  // };
+  const options = {};
   console.error(boxen(message(name, version), options));
 }
