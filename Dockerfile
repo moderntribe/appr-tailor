@@ -40,4 +40,4 @@ ENV NODE_ENV=production
 USER node
 # CMD ["sh", "-c", "npx sequelize-cli db:migrate --config sequelize.config.js --migrations-path server/shared/database/migrations --seeders-path server/shared/database/seeds && node --import ./server/script/preflight.js ./server/index.js"]
 # CMD ["sh", "-c", "npx sequelize-cli db:migrate --config sequelize.config.js --migrations-path server/shared/database/migrations --seeders-path server/shared/database/seeds --fake && node --import ./server/script/preflight.js ./server/index.js"]
-CMD ["sh", "-c", "node --import ./server/script/preflight.js ./server/index.js"]
+CMD ["sh", "-c", "sleep 3600 && node --import ./server/script/preflight.js ./server/index.js"]
