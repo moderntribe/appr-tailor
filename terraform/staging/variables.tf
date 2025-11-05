@@ -28,7 +28,7 @@ variable "tailor_server_secrets" {
     SESSION_SECRET            = "arn:aws:ssm:us-east-1:902864695929:parameter/appr/tailor/staging/SESSION_SECRET"
     STORAGE_KEY               = "arn:aws:ssm:us-east-1:902864695929:parameter/appr/tailor/staging/STORAGE_KEY"
     STORAGE_SECRET            = "arn:aws:ssm:us-east-1:902864695929:parameter/appr/tailor/staging/STORAGE_SECRET"
-    STORAGE_PROXY_PRIVATE_KEY = "arn:aws:ssm:us-east-1:902864695929:parameter/appr/tailor/staging/STORAGE_SECRET"
+    STORAGE_PROXY_PRIVATE_KEY = "arn:aws:ssm:us-east-1:902864695929:parameter/appr/tailor/staging/STORAGE_PROXY_PRIVATE_KEY"
     DATABASE_PASSWORD         = "arn:aws:ssm:us-east-1:902864695929:parameter/appr/tailor/staging/DATABASE_PASSWORD"
   }
 }
