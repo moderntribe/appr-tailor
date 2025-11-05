@@ -1,4 +1,4 @@
-import { authenticate, logout } from '../shared/auth/index.js';
+import auth from '../shared/auth/index.js';
 import { fileURLToPath, URL } from 'node:url';
 import { BAD_REQUEST } from 'http-status-codes';
 import express from 'express';
@@ -59,13 +59,13 @@ function authRequestHandler(req, res, next) {
     ...getPromptParams(req),
     ...getSilentAuthParams(req)
   };
-  return authenticate('oidc', params)(req, res, next);
+  return auth.authenticate('oidc', params)(req, res, next);
 }
 
 // Triggered upon OIDC provider response
 function idpCallbackHandler(req, res, next) {
   if (!isLogoutRequest(req)) return login(req, res, next);
-  return logout({ middleware: true })(req, res, next);
+  return auth.logout({ middleware: true })(req, res, next);
 }
 
 function accessDeniedHandler(err, req, res, next) {
@@ -73,7 +73,7 @@ function accessDeniedHandler(err, req, res, next) {
     return res.redirect(ACCESS_DENIED_ROUTE + err.email);
   }
   if (isSilentAuth(req) && isActiveStrategy(req)) {
-    return logout({ middleware: true })(req, res, () => next(err));
+    return auth.logout({ middleware: true })(req, res, () => next(err));
   }
   return next(err);
 }
@@ -90,7 +90,7 @@ function login(req, res, next) {
     setCookie: true,
     ...(isSilentAuth(req) && getSilentAuthParams(req))
   };
-  authenticate('oidc', params)(req, res, err => {
+  auth.authenticate('oidc', params)(req, res, err => {
     if (err) return next(err);
     if (!isSilentAuth(req)) return res.redirect('/');
     const template = path.resolve(__dirname, './authenticated.mustache');
