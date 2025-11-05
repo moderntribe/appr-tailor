@@ -1,0 +1,150 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment name (dev/staging/prod)'
+        required: true
+        type: string
+      ecr_repository:
+        description: 'ECR repository name'
+        required: true
+        type: string
+      terraform_directory:
+        description: 'Terraform directory path'
+        required: true
+        type: string
+      auth0_custom_domain:
+        description: 'AUTH0 custom domain'
+        required: true
+        type: string
+      auth0_domain:
+        description: 'AUTH0 domain'
+        required: true
+        type: string
+      build_command:
+        description: 'Command to build workspace packages'
+        required: true
+        type: string
+      install_nx_dependencies:
+        description: 'Whether to install NX native dependencies'
+        required: false
+        type: boolean
+        default: false
+      add_runtime_dependencies:
+        description: 'Whether to add missing runtime dependencies'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      auth0_client_id:
+        description: 'AUTH0 Client ID secret'
+        required: true
+      appr_deploy_access_key:
+        description: 'AWS access key for deployment'
+        required: true
+      appr_deploy_secret_access_key:
+        description: 'AWS secret access key for deployment'
+        required: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.appr_deploy_access_key }}
+          aws-secret-access-key: ${{ secrets.appr_deploy_secret_access_key }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20.3.1
+
+      - name: Setup tailor config
+        run: cp ./tailor.config.js.example ./tailor.config.js
+
+      - name: Clean npm cache
+        run: npm cache clean --force
+
+      - name: Delete package-lock.json
+        run: rm -f package-lock.json
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install NX native dependencies
+        if: ${{ inputs.install_nx_dependencies }}
+        run: npm install @nx/nx-linux-x64-gnu --save-dev
+
+      - name: Add missing runtime dependencies
+        if: ${{ inputs.add_runtime_dependencies }}
+        run: |
+          npm install dargs minimist safe-require sequelize-cli --save --legacy-peer-deps
+
+      - name: Build workspace packages
+        run: ${{ inputs.build_command }}
+
+      - name: Build client
+        env:
+          API_PATH: /api
+          OIDC_ENABLED: 1
+          OIDC_LOGIN_TEXT: "Login with APPR"
+          OIDC_LOGOUT_ENABLED: 1
+          AUTH0_CLIENT_ID: ${{ secrets.auth0_client_id }}
+          AUTH0_CUSTOM_DOMAIN: ${{ inputs.auth0_custom_domain }}
+          AUTH0_DOMAIN: ${{ inputs.auth0_domain }}
+        run: npm run build
+
+      - name: Build and push server image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          echo "### :whale: Docker image published" >> $GITHUB_STEP_SUMMARY
+          echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\`" >> $GITHUB_STEP_SUMMARY
+          echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:latest\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ${{ inputs.terraform_directory }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ${{ inputs.terraform_directory }}
+        id: plan
+        env:
+          TF_VAR_image_tag: ${{ github.sha }}
+        run: |
+          terraform plan -out=plan.out
+
+          echo '```' > plan.txt
+          terraform show -no-color plan.out >> plan.txt
+          echo '```' >> plan.txt
+
+          echo "# Terraform Plan" >> $GITHUB_STEP_SUMMARY
+          cat plan.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Terraform Apply
+        working-directory: ${{ inputs.terraform_directory }}
+        env:
+          TF_VAR_image_tag: ${{ github.sha }}
+        run: |
+          terraform apply -auto-approve "${{ steps.plan.outputs.plan }}"
+

@@ -4,87 +4,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.APPR_DEPLOY_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.APPR_DEPLOY_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 12.13.0
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Build workspace packages
-        run: npx lerna run build
-
-      - name: Build client
-        env:
-          API_PATH: /api
-          OIDC_ENABLED: 1
-          OIDC_LOGIN_TEXT: "Login with APPR"
-          OIDC_LOGOUT_ENABLED: 1
-          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_DEV }}
-          AUTH0_CUSTOM_DOMAIN: cepp-dev.auth0.com
-          AUTH0_DOMAIN: cepp-dev.auth0.com
-        run: npm run build
-
-      - name: Build and push server image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: appr-tailor-staging
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-          echo "### :whale: Docker image published" >> $GITHUB_STEP_SUMMARY
-          echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\`" >> $GITHUB_STEP_SUMMARY
-          echo "\`$ECR_REGISTRY/$ECR_REPOSITORY:latest\`" >> $GITHUB_STEP_SUMMARY
-
-          #docker pull $ECR_REGISTRY/cepp-tailor-dev:latest
-          #docker tag $ECR_REGISTRY/cepp-tailor-dev:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        working-directory: terraform/staging
-        run: terraform init
-
-      - name: Terraform Plan
-        working-directory: terraform/staging
-        id: plan
-        env:
-          TF_VAR_image_tag: ${{ github.sha }}
-        run: |
-          terraform plan -out=plan.out
-
-          echo '```' > plan.txt
-          terraform show -no-color plan.out >> plan.txt
-          echo '```' >> plan.txt
-
-          echo "# Terraform Plan" >> $GITHUB_STEP_SUMMARY
-          cat plan.txt >> $GITHUB_STEP_SUMMARY
-
-      - name: Terraform Apply
-        working-directory: terraform/staging
-        env:
-          TF_VAR_image_tag: ${{ github.sha }}
-        run: |
-          terraform apply -auto-approve "${{ steps.plan.outputs.plan }}"
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: staging
+      ecr_repository: appr-tailor-staging
+      terraform_directory: terraform/staging
+      auth0_custom_domain: cepp-dev.auth0.com
+      auth0_domain: cepp-dev.auth0.com
+      build_command: npx lerna run build
+    secrets:
+      auth0_client_id: ${{ secrets.AUTH0_CLIENT_ID_DEV }}
+      appr_deploy_access_key: ${{ secrets.APPR_DEPLOY_ACCESS_KEY }}
+      appr_deploy_secret_access_key: ${{ secrets.APPR_DEPLOY_SECRET_ACCESS_KEY }}
