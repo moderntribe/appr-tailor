@@ -48,6 +48,10 @@ on:
         description: 'AWS secret access key for deployment'
         required: true
 
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
