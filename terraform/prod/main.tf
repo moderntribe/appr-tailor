@@ -5,7 +5,9 @@ resource "aws_ecs_service" "tailor_service" {
   task_definition                    = aws_ecs_task_definition.tailor_task_definition.arn
   desired_count                      = 1
   launch_type                        = "FARGATE"
-  deployment_minimum_healthy_percent = 0
+  wait_for_steady_state              = true
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
   enable_execute_command             = true
 
   force_new_deployment = true
@@ -51,7 +53,7 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "AUTH_JWT_ISSUER", value = "tailor-cepp" },
         { name = "AUTH_JWT_SCHEME", value = "JWT" },
         { name = "AUTH_SALT_ROUNDS", value = "10" },
-        { name = "CORS_ALLOWED_ORIGINS", value = "http://localhost:8080" },  # same as dev
+        { name = "CORS_ALLOWED_ORIGINS", value = "http://localhost:8080" }, # same as dev
         { name = "DATABASE_HOST", value = local.rds_tailor_info.address },
         { name = "DATABASE_NAME", value = "tailor" },
         { name = "DATABASE_PORT", value = tostring(local.rds_tailor_info.port) },

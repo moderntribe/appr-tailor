@@ -5,6 +5,7 @@ resource "aws_ecs_service" "tailor_service" {
   task_definition                    = aws_ecs_task_definition.tailor_task_definition.arn
   desired_count                      = 1
   launch_type                        = "FARGATE"
+  wait_for_steady_state              = true
   deployment_minimum_healthy_percent = 0
   enable_execute_command             = true
   force_new_deployment               = true
