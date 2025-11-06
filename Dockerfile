@@ -1,4 +1,4 @@
-FROM node:20.3.1-bullseye AS base
+FROM node:20.3.1-bullseye-slim AS base
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dumb-init \
     python3 \
