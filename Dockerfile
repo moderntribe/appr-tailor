@@ -1,11 +1,11 @@
 FROM node:20.3.1-bullseye-slim AS base
-# RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends python3
 #     dumb-init \
 #     python3 \
 #     make \
 #     g++ \
 #     && rm -rf /var/lib/apt/lists/*
-ENTRYPOINT ["dumb-init", "--"]
+# ENTRYPOINT ["dumb-init", "--"]
 
 FROM base AS configure
 WORKDIR /usr/src/app
