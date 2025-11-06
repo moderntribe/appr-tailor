@@ -105,7 +105,15 @@ export default {
   computed: {
     name: ({ repository }) => repository.name,
     description: ({ repository }) => repository.description,
-    schema: vm => vm.$schemaService.getSchema(vm.repository.schema).name,
+    schema(vm) {
+      try {
+        return vm.$schemaService.getSchema(vm.repository.schema).name;
+      } catch (e) {
+        return vm.repository && vm.repository.schema
+          ? String(vm.repository.schema).toUpperCase()
+          : 'UNKNOWN';
+      }
+    },
     lastActivity: ({ repository }) => first(repository.revisions),
     hasUnpublishedChanges: ({ repository }) => repository.hasUnpublishedChanges,
     isPinned: ({ repository }) => get(repository, 'repositoryUser.pinned', false),
@@ -121,7 +129,9 @@ export default {
       });
     },
     detectSchemaTruncation() {
-      const { clientWidth, scrollWidth } = this.$refs.schemaName;
+      const el = this.$refs && this.$refs.schemaName;
+      if (!el) return;
+      const { clientWidth, scrollWidth } = el;
       this.isSchemaTruncated = clientWidth < scrollWidth;
     }
   },
