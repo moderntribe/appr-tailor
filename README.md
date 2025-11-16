@@ -3,11 +3,8 @@
 **Tailor** runs across three environments: **Development**, **Staging**, and **Production**.
 
 * `dev`: [tailor-dev.advancingpretrial.org](https://tailor-dev.advancingpretrial.org)
-  Deployed on AWS ECS.
 * `staging`: [tailor-staging.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
-  Deployed on AWS ECS.
 * `production`: [tailor-prod.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
-  Deployed on AWS ECS.
 
 Each environment is deployed independently through dedicated GitHub Actions workflows:
 `deploy-dev.yml`, `deploy-staging.yml`, and `deploy-prod.yml`.
