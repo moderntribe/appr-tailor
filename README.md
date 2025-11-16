@@ -1,30 +1,4 @@
-<div align="center">
-  <img width="180" src="./client/assets/img/default-logo-compact.svg">
-</div>
-
-# Tailor CMS
-
-[![CircleCI build
-status](https://badgen.net/circleci/github/ExtensionEngine/tailor/develop?style=svg)](https://circleci.com/gh/ExtensionEngine/tailor)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f3eab80316244b7b959b7bbf3d7c3ace)](https://www.codacy.com/gh/ExtensionEngine/tailor/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ExtensionEngine/tailor&amp;utm_campaign=Badge_Grade)
-[![Known
-Vulnerabilities](https://badgen.net/snyk/ExtensionEngine/tailor/develop)](https://snyk.io/test/github/ExtensionEngine/tailor)
-[![GitHub package
-version](https://badgen.net/github/release/ExtensionEngine/tailor)](https://github.com/ExtensionEngine/tailor/releases)
-[![GitHub
-license](https://badgen.net/github/license/ExtensionEngine/tailor)](https://github.com/ExtensionEngine/tailor/blob/develop/LICENSE)
-[![js @extensionengine
-style](https://badgen.net/badge/code%20style/@extensionengine/black)](https://github.com/ExtensionEngine/eslint-config)
-[![style @extensionengine
-style](https://badgen.net/badge/stylelint/@extensionengine/black)](https://github.com/ExtensionEngine/stylelint-config)
-[![Open Source
-Love](https://badgen.net/badge/Open%20Source/%E2%9D%A4/3eaf8e)](https://github.com/ellerbrock/open-source-badge/)
-
-Configurable headless CMS for complex content structures.
-
-Here’s the updated README section with your GitHub secrets information included, keeping it concise and clear:
-
----
+# APPR Tailor
 
 ## Tailor Deployment Overview
 
@@ -36,7 +10,8 @@ Here’s the updated README section with your GitHub secrets information include
   Deployed on AWS ECS.
 * **Staging:** [tailor-staging.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
   Deployed on AWS ECS.
-* **Production:** Runs on AWS EC2 instances, for now.
+* **Production:** [tailor-prod.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
+  Deployed on AWS ECS.
 
 Each environment is deployed independently through dedicated GitHub Actions workflows:
 `deploy-dev.yml`, `deploy-staging.yml`, and `deploy-prod.yml`.
@@ -52,24 +27,28 @@ This includes:
 
 The RDS databases are hosted in **private subnets** with **no direct Internet access**.
 
-### Secrets Management
+### Secrets and Paramters Management
 
-* **AWS Secrets Manager** stores all sensitive runtime configuration for services.
-   
-   * We **no longer use Infisical** for secret management.
-* **GitHub repository secrets** are used to support deployments and CI/CD workflows. These include:
-
+- **AWS Secrets Manager** stores database credentials (`rds!db-xxxx…`). Descriptions indicate the environment.
+- **Parameter Store:** stores runtime configuration (`/appr/tailor/<env>/<PARAM_NAME>`), including:
+  - Auth0 Client ID
+  - JWT secret
+  - API keys
+- **GitHub repository secrets** are used to support deployments and CICD workflows. These include:
   * **AWS credentials:** Allow pushing Docker images to ECR and deploying infrastructure via Terraform.
   * **Auth0 Client ID:** Used by services to authenticate against Auth0.
 
-> GitHub secrets were created manually and must be maintained carefully.
+ECS loads these parameters at deploy time. Use AWS Console or CLI to add or update their values.
+
+GitHub secrets were created manually and must be maintained carefully.
 
 ### Deployment Workflow
 
 1. Trigger the appropriate GitHub Actions workflow.
+2. The workflow builds the new client.
 2. The workflow builds a new Docker image.
 3. The image is pushed to **Amazon ECR**, tagged with the **commit SHA**.
-4. **Terraform** picks up the new image tag and deploys it to ECS (for dev/staging) or EC2 (for production).
+4. **Terraform** picks up the new image tag and deploys it to ECS.
 
 ### How to Trigger a Deployment
 
@@ -82,62 +61,6 @@ The RDS databases are hosted in **private subnets** with **no direct Internet ac
    * Update the corresponding environment using Terraform
 
 You can track progress directly in the **Actions** tab on GitHub.
-
-### Current Limitations
-
-* The project relies on **outdated package versions**.
-* **Node.js versions** are inconsistent (mix of v14, v16 and v20).
-* The current build originates from an **older Studion image**, which may not align fully with the new infrastructure. This was done to roll the new environment faster.
-
-
-## Dependencies
-
-- Node.js (>= 16.16.0)
-- npm (>= 8.11.0)
-- PostgreSQL (>= 9.4)
-
-## Installation
-
-### Prerequisites
-
-- Node.js & npm: https://nodejs.org/en/download/
-- PostgreSQL: https://www.postgresql.org/download/
-- Clone this repo
-
-### Setup
-
-- Run `npm install` in the repo directory
-- Create a database in PostgreSQL
-- Application is configured via environment variables contained in a file named
-  `.env`. Use the `.env.example` file as a template: `cp .env.example .env` and
-  enter configuration details.
-- Initialize database by running `npm run db migrate`
-- To enable demo repository schema configuration copy `tailor.config.js.example`
-  into `tailor.config.js.`. For more details about the custom schema configuration
-  please refer [to this guide](https://extensionengine.github.io/tailor-docs/tailor/developer-guide/configuration.html).
-- Configure asset storage proxy by following the steps [in this guide](https://extensionengine.github.io/tailor-docs/tailor/developer-guide/storage-proxy.html)
-  based on your environment.
-- You can create admin user by running `npm run add:admin <email> <password>`
-- App branding is configured via values set in a file named `.brandrc.js`. 
-  Use the `.brandrc.js.example` file as a template: `cp
-  .brandrc.js.example .brandrc.js` and enter configuration details (Optional).
-
-## Launch
-
-### Development
-
-- Server: `npm run dev:server`
-- Client (webpack dev server): `npm run dev:client`
-
-This project uses a monorepo setup. In order to contribute to [packages](./packages) following commands should be executed:
-- Run `npm run packages:setup` - initial setup, dependency installation, package linking, etc. This command should be executed only a single time. 
-- Run `npm run packages:build` - build all packages. Run this command after altering the package's code.
-- Run `npm run packages:build --package=<package-name>` to build only specified package. For example: `npm run packages:build --package=core-components`.
-
-### Production
-
-- Bundle client by issuing `npm run build`
-- `npm run start`
 
 ## Content repository structure
 
