@@ -1,16 +1,12 @@
 # APPR Tailor
 
-## Tailor Deployment Overview
-
 **Tailor** runs across three environments: **Development**, **Staging**, and **Production**.
 
-### Environments
-
-* **Development:** [tailor-dev.advancingpretrial.org](https://tailor-dev.advancingpretrial.org)
+* `dev`: [tailor-dev.advancingpretrial.org](https://tailor-dev.advancingpretrial.org)
   Deployed on AWS ECS.
-* **Staging:** [tailor-staging.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
+* `staging`: [tailor-staging.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
   Deployed on AWS ECS.
-* **Production:** [tailor-prod.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
+* `production`: [tailor-prod.advancingpretrial.org](https://tailor-staging.advancingpretrial.org)
   Deployed on AWS ECS.
 
 Each environment is deployed independently through dedicated GitHub Actions workflows:
