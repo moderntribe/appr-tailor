@@ -3,6 +3,8 @@ import config from '../../tailor.config.js';
 
 const { SCHEMAS, WORKFLOWS } = config;
 
+console.log('Loaded schemas:', SCHEMAS.map(s => s.id));
+
 processSchemas(SCHEMAS);
 
 const schema = getSchemaApi(SCHEMAS);
