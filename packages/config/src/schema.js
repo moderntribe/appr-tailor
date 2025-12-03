@@ -43,7 +43,7 @@ export default (schemas, defaultConfiguration) => {
 
   function getSchema(id) {
     const schema = find(schemas, { id });
-    if (!schema) throw new Error('Schema does not exist!');
+    if (!schema) throw new Error(`schema id=${id} does not exist`);
     return schema;
   }
 
