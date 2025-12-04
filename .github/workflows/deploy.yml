@@ -74,8 +74,8 @@ jobs:
         with:
           node-version: 20.3.1
 
-      - name: Setup tailor config
-        run: cp ./tailor.config.js.example ./tailor.config.js
+      # - name: Setup tailor config
+      #   run: cp ./tailor.config.js.example ./tailor.config.js
 
       - name: Clean npm cache
         run: npm cache clean --force
