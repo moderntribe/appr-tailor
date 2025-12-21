@@ -61,7 +61,7 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "DATABASE_HOST", value = local.rds_tailor_info.address },
         { name = "DATABASE_NAME", value = "tailor" },
         { name = "DATABASE_PORT", value = tostring(local.rds_tailor_info.port) },
-        { name = "DATABASE_USER", value = "cepp_dev" },
+        { name = "DATABASE_USER", value = "tailor_dba" },
         { name = "EMAIL_HOST", value = "email-smtp.us-east-1.amazonaws.com" },
         { name = "EMAIL_SENDER_ADDRESS", value = "cepp-dev@extensionengine.com" },
         { name = "EMAIL_SENDER_NAME", value = "APPR Authoring" },
