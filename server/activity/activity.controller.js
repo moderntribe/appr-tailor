@@ -71,7 +71,7 @@ function clone({ activity, body, user }, res) {
   const { repositoryId, parentId, position } = body;
   const context = { userId: user.id };
   return activity.clone(repositoryId, parentId, position, context).then(mappings => {
-    const opts = { where: { id: Object.values(mappings) } };
+    const opts = { where: { id: Object.values(mappings.activity) } };
     return Activity.findAll(opts).then(data => res.json({ data }));
   });
 }
