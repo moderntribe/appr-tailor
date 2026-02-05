@@ -25,7 +25,7 @@
           v-if="item.selectable"
           @click="toggleSelection(item)"
           :disabled="!isSelectable(item)">
-          mdi-check{{ isSelected(item) ? '-box-outline' : 'box-blank-outline' }}
+          mdi-checkbox-{{ isSelected(item) ? 'marked' : 'blank' }}-outline
         </v-icon>
       </template>
     </v-treeview>
