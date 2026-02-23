@@ -82,10 +82,9 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "PREVIEW_URL", value = "https://learn-${var.environment}.advancingpretrial.org/api/v1/preview/" },
         { name = "PROTOCOL", value = "https" },
         { name = "REVERSE_PROXY_PORT", value = "443" },
-        { name = "STORAGE_BUCKET", value = "cepp-staging" },
         { name = "STORAGE_BUCKET", value = "cepp-prod" },
         { name = "STORAGE_PROVIDER", value = "amazon" },
-        { name = "STORAGE_PUBLIC_BUCKET", value = "cepp-staging-public" },
+        { name = "STORAGE_PUBLIC_BUCKET", value = "cepp-prod-public" },
         { name = "STORAGE_REGION", value = "us-east-2" },
       ]
       secrets = concat(
