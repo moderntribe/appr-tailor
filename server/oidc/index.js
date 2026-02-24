@@ -64,13 +64,17 @@ function authRequestHandler(req, res, next) {
 
 // Triggered upon OIDC provider response
 function idpCallbackHandler(req, res, next) {
-  if (!isLogoutRequest(req)) return login(req, res, next);
-  return auth.logout({ middleware: true })(req, res, next);
+  // Treat as logout if explicitly flagged OR if the callback has no code/error
+  // (Auth0 may strip ?action=logout from the returnTo URL if not whitelisted)
+  if (isLogoutRequest(req) || (!req.query.code && !req.query.error)) {
+    return auth.logout({ middleware: true })(req, res, next);
+  }
+  return login(req, res, next);
 }
 
 function accessDeniedHandler(err, req, res, next) {
   if (!isOIDCError(err) && !isSilentAuth(req)) {
-    return res.redirect(ACCESS_DENIED_ROUTE + err.email);
+    return res.redirect(ACCESS_DENIED_ROUTE + (err?.email ?? ''));
   }
   if (isSilentAuth(req) && isActiveStrategy(req)) {
     return auth.logout({ middleware: true })(req, res, () => next(err));
