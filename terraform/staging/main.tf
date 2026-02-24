@@ -64,7 +64,6 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "OIDC_TOKEN_ENDPOINT", value = "https://account.test.advancingpretrial.org/oauth/token" },
         { name = "OIDC_LOGOUT_ENDPOINT", value = "https://account.test.advancingpretrial.org/logout" },
         { name = "OIDC_USERINFO_ENDPOINT", value = "https://account.test.advancingpretrial.org/userinfo" },
-        { name = "OIDC_USERINFO_ENDPOINT", value = "https://account.test.advancingpretrial.org/userinfo" },
         { name = "OIDC_LOGOUT_ENABLED", value = "1" },
         { name = "OIDC_POST_LOGOUT_URI_KEY", value = "returnTo" },
         { name = "OIDC_ALLOW_SIGNUP", value = "0" },
