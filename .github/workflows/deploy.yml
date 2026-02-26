@@ -113,7 +113,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ inputs.ecr_repository }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: ${{ github.sha }}-${{ github.run_number }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -135,7 +135,7 @@ jobs:
         working-directory: ${{ inputs.terraform_directory }}
         id: plan
         env:
-          TF_VAR_image_tag: ${{ github.sha }}
+          TF_VAR_image_tag: ${{ github.sha }}-${{ github.run_number }}
         run: |
           terraform plan -out=plan.out
 
@@ -149,7 +149,7 @@ jobs:
       - name: Terraform Apply
         working-directory: ${{ inputs.terraform_directory }}
         env:
-          TF_VAR_image_tag: ${{ github.sha }}
+          TF_VAR_image_tag: ${{ github.sha }}-${{ github.run_number }}
         run: |
           terraform apply -auto-approve "${{ steps.plan.outputs.plan }}"
 
