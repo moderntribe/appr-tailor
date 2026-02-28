@@ -16,6 +16,5 @@ jobs:
       install_nx_dependencies: true
       add_runtime_dependencies: true
     secrets:
-      auth0_client_id: ${{ secrets.AUTH0_CLIENT_ID_DEV }}
       appr_deploy_access_key: ${{ secrets.APPR_DEPLOY_ACCESS_KEY }}
       appr_deploy_secret_access_key: ${{ secrets.APPR_DEPLOY_SECRET_ACCESS_KEY }}

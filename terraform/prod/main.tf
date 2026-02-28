@@ -87,14 +87,18 @@ resource "aws_ecs_task_definition" "tailor_task_definition" {
         { name = "STORAGE_PUBLIC_BUCKET", value = "appr-content-prod-public" },
         { name = "STORAGE_REGION", value = "us-east-1" },
       ]
-      secrets = concat(
-        [
-          for secret_name, secret_arn in var.tailor_server_secrets : {
-            name      = secret_name
-            valueFrom = secret_arn
-          }
-        ]
-      )
+      secrets = [
+        { name = "AUTH_JWT_SECRET",           valueFrom = data.aws_ssm_parameter.auth_jwt_secret.arn },
+        { name = "DATABASE_PASSWORD",         valueFrom = data.aws_ssm_parameter.database_password.arn },
+        { name = "EMAIL_PASSWORD",            valueFrom = data.aws_ssm_parameter.email_password.arn },
+        { name = "EMAIL_USER",                valueFrom = data.aws_ssm_parameter.email_user.arn },
+        { name = "OIDC_CLIENT_ID",            valueFrom = data.aws_ssm_parameter.auth0_client_id.arn },
+        { name = "OIDC_CLIENT_SECRET",        valueFrom = data.aws_ssm_parameter.auth0_client_secret.arn },
+        { name = "SESSION_SECRET",            valueFrom = data.aws_ssm_parameter.session_secret.arn },
+        { name = "STORAGE_KEY",               valueFrom = data.aws_ssm_parameter.storage_key.arn },
+        { name = "STORAGE_PROXY_PRIVATE_KEY", valueFrom = data.aws_ssm_parameter.storage_proxy_private_key.arn },
+        { name = "STORAGE_SECRET",            valueFrom = data.aws_ssm_parameter.storage_secret.arn },
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
