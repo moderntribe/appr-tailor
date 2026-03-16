@@ -55,6 +55,70 @@ GitHub secrets were created manually and must be maintained carefully.
 
 You can track progress directly in the **Actions** tab on GitHub.
 
+## Database
+
+### Credentials
+
+Database passwords are stored in **AWS Secrets Manager**. Retrieve them via the AWS Console or CLI.
+
+### Dump & Restore
+
+Use the `mt-bastion-<env>` EC2 instance for ad-hoc DB access — it lives in the same VPC as RDS and has `psql`, `pg_dump`, and `pg_restore` pre-installed. Leave it stopped when not in use.
+
+**1. Dump the database** (from the Platform/Learn EC2 instance):
+
+```bash
+ssh -i ~/.ssh/cepp.prod.pem ec2-user@<platform-ec2-ip>
+PGPASSWORD='<password>' pg_dump -U cepp_dba -h <source-rds-host> -d cepp -F c -f /tmp/tailor.dump
+```
+
+`-F c` produces a custom-format dump required by `pg_restore`.
+
+**2. Copy the dump to your local machine:**
+
+```bash
+scp -i ~/.ssh/cepp.prod.pem ec2-user@<platform-ec2-ip>:/tmp/tailor.dump ./dumps/tailor.dump
+```
+
+**3. Start the bastion** (run this yourself — mutates AWS state):
+
+```bash
+# Find the instance ID:
+aws ec2 describe-instances --filters "Name=tag:Name,Values=mt-bastion-*" \
+  --query "Reservations[].Instances[].[InstanceId,Tags[?Key=='Name'].Value|[0],State.Name]" \
+  --output table --profile appr --region us-east-1
+
+# Start it:
+aws ec2 start-instances --instance-ids <instance-id> --profile appr --region us-east-1
+```
+
+**4. Copy the dump to the bastion:**
+
+```bash
+scp -i ~/.ssh/appr-key-us-east-1.pem ./dumps/tailor.dump ubuntu@<bastion-ip>:/tmp
+```
+
+**5. SSH into the bastion and restore:**
+
+```bash
+ssh -i ~/.ssh/appr-key-us-east-1.pem ubuntu@<bastion-ip>
+
+PGPASSWORD=<password> pg_restore \
+  -h <target-rds-host> \
+  -U postgres \
+  -d <database> \
+  --clean \
+  -v /tmp/tailor.dump
+```
+
+`--clean` drops existing objects before restoring.
+
+**6. Stop the bastion when done** (run this yourself):
+
+```bash
+aws ec2 stop-instances --instance-ids <instance-id> --profile appr --region us-east-1
+```
+
 ## Content repository structure
 
 Repository structure can be altered using tailor configuration file, which must be placed inside the root
